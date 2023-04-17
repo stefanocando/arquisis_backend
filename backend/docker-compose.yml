@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_USER=legitbusiness
+      - POSTGRES_DB=legitbusiness_db
+    ports:
+      - 5432:5432
+    networks:
+      - shared-network
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+  Server:
+    container_name: server-ticketseller
+    restart: unless-stopped
+    image: server-ticketseller-dev:1.0.0
+    build:
+      context: Server
+      target: development
+      dockerfile: Dockerfile
+    environment:
+     - DB_USER=legitbusiness
+     - DB_NAME=legitbusiness_db
+     - DB_PASSWORD=12345678
+     - DB_HOST=postgres
+    ports:
+      - 8080:8080
+    networks:
+      - shared-network
+    depends_on:
+      - postgres
+
+  mqtt:
+    container_name: mqtt-ticketseller
+    image: mqtt-ticketseller-dev:1.0.0
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - shared-network
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    depends_on:
+      - Server
+    
+
+networks:
+  shared-network:
+    driver: bridge
+volumes:
+  postgres_db:
