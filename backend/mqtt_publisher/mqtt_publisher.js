@@ -40,17 +40,16 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 app.post("/requests", (req, res) => {
+    const {request_id, group_id, event_id, deposit_token, quantity, seller} = req.body;
     client.publish('events/requests', req.data, () => {
         console.log("Request enviada correctamente");
     });
     client.on('message', async (topic, payload) => {
         let validations = JSON.parse(payload);
-        if (validations.id == req.data.id){
+        if (validations.request_id == request_id){
             res.send(validations);
-            client.end();
         }
     })
-
 });
 
 app.listen(9000, () => {
