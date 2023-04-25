@@ -41,15 +41,29 @@ app.use(bodyParser.json());
 
 app.post("/requests", (req, res) => {
     const {request_id, group_id, event_id, deposit_token, quantity, seller} = req.body;
-    client.publish('events/requests', req.data, () => {
-        console.log("Request enviada correctamente");
+    console.log(req.body);
+    const data = JSON.stringify(req.body);
+    console.log(data);
+
+    const responsePromise = new Promise((resolve, reject) => {
+
+      client.on('message', (topic, payload) => {
+      if (request_id === JSON.parse(payload).request_id) {
+        const response = JSON.parse(payload);
+        resolve(response);
+      }
+      console.log(JSON.parse(payload));
     });
-    client.on('message', async (topic, payload) => {
-        let validations = JSON.parse(payload);
-        if (validations.request_id == request_id){
-            res.send(validations);
-        }
-    })
+
+  });
+
+  client.publish('events/requests', data, () => {
+    console.log("Request enviada correctamente");
+  });
+
+  responsePromise
+    .then(response => res.send(response))
+    .catch(error => res.status(500).send(error.message));
 });
 
 app.listen(9000, () => {
