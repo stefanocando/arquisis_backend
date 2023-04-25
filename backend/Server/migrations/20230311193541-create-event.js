@@ -30,6 +30,9 @@ module.exports = {
       longitude: {
         type: Sequelize.FLOAT
       },
+      event_id: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

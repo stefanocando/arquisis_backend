@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     quantity: DataTypes.FLOAT,
     location: DataTypes.STRING,
     latitude: DataTypes.FLOAT,
-    longitude: DataTypes.FLOAT
+    longitude: DataTypes.FLOAT,
+    event_id: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Event',
