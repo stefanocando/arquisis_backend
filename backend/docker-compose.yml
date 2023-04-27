@@ -48,6 +48,22 @@ services:
     depends_on:
       - Server
     
+  MqttServer:
+    container_name: mqtt-server-ticketseller
+    restart: unless-stopped
+    image: mqttt-server-ticketseller-dev:1.0.0
+    build:
+      context: mqtt_publisher
+      dockerfile: Dockerfile
+    ports:
+      - 9000:9000
+    networks:
+      - shared-network
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    depends_on:
+      - Server
+    
 
 networks:
   shared-network:

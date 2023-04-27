@@ -19,6 +19,7 @@ client.on('connect', () => {
     });
   });
 
+
 const app = express();
 
 app.use((req, res, next) => {
@@ -41,8 +42,8 @@ app.use(bodyParser.json());
 
 app.post("/requests", (req, res) => {
     const {request_id, group_id, event_id, deposit_token, quantity, seller} = req.body;
-    console.log(req.body);
-    const data = JSON.stringify(req.body);
+    //const data = JSON.stringify(req.body);
+    const data = JSON.stringify(req.body.request_data);
     console.log(data);
 
     const responsePromise = new Promise((resolve, reject) => {
@@ -60,7 +61,6 @@ app.post("/requests", (req, res) => {
   client.publish('events/requests', data, () => {
     console.log("Request enviada correctamente");
   });
-
   responsePromise
     .then(response => res.send(response))
     .catch(error => res.status(500).send(error.message));

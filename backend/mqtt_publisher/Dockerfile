@@ -13,4 +13,4 @@ COPY . .
 
 ENTRYPOINT [ "npm", "start" ]
 
-EXPOSE 10000
+EXPOSE 9000

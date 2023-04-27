@@ -29,8 +29,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.use('/events', eventsRoutes);
 app.use('/request', requestRoutes);
+app.use('/events', eventsRoutes);
+
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {

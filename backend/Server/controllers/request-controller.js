@@ -6,8 +6,9 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const createRequest = async(req, res, next) =>{
-  const {group_id, event_id, deposit_token, quantity, seller, user_id} =
+  const {request_id,group_id, event_id, deposit_token, quantity, seller, user_id} =
     req.body;
+  
   const uuid = uuidv4();
   const request_data = {
     "request_id": uuid,
@@ -15,11 +16,10 @@ const createRequest = async(req, res, next) =>{
     "event_id": event_id, 
     "deposit_token": deposit_token, 
     "quantity": quantity, 
-    "seller" : ""
+    "seller" : seller
   };
-
   try {
-    const request_response = await axios.post('http://localhost:9000/requests', {
+    const request_response = await axios.post('http://MqttServer:9000/requests', {
       request_data
     }, {
       headers: { 'Content-Type': 'application/json' }
