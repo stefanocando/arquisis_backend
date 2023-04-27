@@ -27,6 +27,9 @@ module.exports = {
       state: {
         type: Sequelize.INTEGER
       },
+      event_id: {
+        type: Sequelize.STRING,
+        references: {model: "Events", key: 'event_id'}},
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -34,10 +37,6 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      event_id: {
-        type: Sequelize.INTEGER,
-        references: {model: "Events", key: 'id'}
       }
     });
   },

@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const createRequest = async(req, res, next) =>{
-  const {request_id,group_id, event_id, deposit_token, quantity, seller, user_id} =
+  const {group_id, event_id, deposit_token, quantity, seller, user_id} =
     req.body;
   
   const uuid = uuidv4();
@@ -18,33 +18,37 @@ const createRequest = async(req, res, next) =>{
     "quantity": quantity, 
     "seller" : seller
   };
+  let isValidRequest = false;
   try {
-    const request_response = await axios.post('http://MqttServer:9000/requests', {
+    await axios.post('http://MqttServer:9000/requests', {
       request_data
     }, {
       headers: { 'Content-Type': 'application/json' }
-    })
-    request_response.then((response) => {console.log(response.data)})
+    }).then((response) => isValidRequest=response.data.sendValidationRequest.valid)
   } catch (err) {
     console.log(err);
   }
+  if (isValidRequest){
+    const createdRequest = db.Request.build({
+      group_id: group_id,
+      deposit_token: deposit_token,
+      quantity, quantity,
+      seller: seller,
+      user_id: user_id,
+      event_id: event_id,
+    })
+    try {
+      await createdRequest.save();
+      await 
+      res.json({messaje: 'Succesfully created Request'})
+    } catch (err) {
+      const error = new HttpError('Could not create Request due to Create in DB', 500);
+      return error;
+    }
+  }else{
+    res.json({messaje: "Could not create Request due to Invalid Validation"})
+  }
 
-  // const createdRequest = db.Request.build({
-  //   group_id: group_id,
-  //   deposit_token: deposit_token,
-  //   quantity, quantity,
-  //   seller: seller,
-  //   user_id: user_id,
-  //   event_id: event_id,
-  // })
-  // try {
-  //   await createdRequest.save();
-  //   await 
-  //   res.json({messaje: 'Succesfully created Request'})
-  // } catch (err) {
-  //   const error = new HttpError('Could not create event', 500);
-  //   return error;
-  // }
 }
 
 exports.createRequest = createRequest;

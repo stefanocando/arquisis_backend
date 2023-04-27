@@ -42,18 +42,17 @@ app.use(bodyParser.json());
 
 app.post("/requests", (req, res) => {
     const {request_id, group_id, event_id, deposit_token, quantity, seller} = req.body;
-    //const data = JSON.stringify(req.body);
+    // const data = JSON.stringify(req.body);
     const data = JSON.stringify(req.body.request_data);
-    console.log(data);
-
+    let sendValidationRequest;
     const responsePromise = new Promise((resolve, reject) => {
-
       client.on('message', (topic, payload) => {
       if (request_id === JSON.parse(payload).request_id) {
         const response = JSON.parse(payload);
         resolve(response);
       }
-      console.log(JSON.parse(payload));
+      sendValidationRequest = JSON.parse(payload);
+      res.json({sendValidationRequest})
     });
 
   });
@@ -61,9 +60,11 @@ app.post("/requests", (req, res) => {
   client.publish('events/requests', data, () => {
     console.log("Request enviada correctamente");
   });
+
   responsePromise
-    .then(response => res.send(response))
-    .catch(error => res.status(500).send(error.message));
+    .then(response => console.log(response))
+    .catch(error => console.log(error.message));
+
 });
 
 app.listen(9000, () => {

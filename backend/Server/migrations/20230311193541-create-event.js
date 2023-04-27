@@ -31,7 +31,8 @@ module.exports = {
         type: Sequelize.FLOAT
       },
       event_id: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       createdAt: {
         allowNull: false,
