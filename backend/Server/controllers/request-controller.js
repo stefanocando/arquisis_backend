@@ -1,54 +1,36 @@
 const db = require('../models/index');
-const requests = require('../models/event');
 const HttpError = require('../http-error');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 
 
-const createRequest = async(req, res, next) =>{
-  const {group_id, event_id, deposit_token, quantity, seller, user_id} =
-    req.body;
-  
-  const uuid = uuidv4();
-  const request_data = {
-    "request_id": uuid,
-    "group_id": group_id, 
-    "event_id": event_id, 
-    "deposit_token": deposit_token, 
-    "quantity": quantity, 
-    "seller" : seller
-  };
-  let isValidRequest = false;
+const saveRequest = async(req, res, next) =>{
+  const {request_id, group_id, event_id, deposit_token, quantity, seller, user_id} =
+    req.body.info
   try {
-    await axios.post('http://MqttServer:9000/requests', {
-      request_data
-    }, {
-      headers: { 'Content-Type': 'application/json' }
-    }).then((response) => isValidRequest=response.data.sendValidationRequest.valid)
-  } catch (err) {
-    console.log(err);
-  }
-  if (isValidRequest){
-    const createdRequest = db.Request.build({
+    await db.Request.build({
+      request_id: request_id,
       group_id: group_id,
+      event_id: event_id,
       deposit_token: deposit_token,
-      quantity, quantity,
+      quantity: quantity,
       seller: seller,
       user_id: user_id,
-      event_id: event_id,
-    })
-    try {
-      await createdRequest.save();
-      await 
-      res.json({messaje: 'Succesfully created Request'})
-    } catch (err) {
-      const error = new HttpError('Could not create Request due to Create in DB', 500);
-      return error;
-    }
-  }else{
-    res.json({messaje: "Could not create Request due to Invalid Validation"})
+    }).then((new_request) => {
+      new_request.save();
+    });
+    await db.Event.findOne({ where: { event_id: event_id } }).then({
+      event_id : event_id,
+    }).then((event) => {event.quantity = event.quantity - quantity; event.save();});
+  } catch (err) {
+    const error = new HttpError('Could not create request', 500);
+    return next(error);
   }
+  res.status(201).json({ message: "The request was succesfully created!" });
+}
 
+const createRequest = async (req, res, next) => {
+  
 }
 
 exports.createRequest = createRequest;
