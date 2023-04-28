@@ -4,9 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const eventsRoutes = require('./routes/events-routes');
+const requestRoutes = require('./routes/request-routes')
 
-// const PORT = process.env.PORT || 5000;
-const PORT = 8080;
+const PORT = process.env.PORT || 5000;
+// const PORT = 8080;
 
 const app = express();
 
@@ -28,7 +29,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
+app.use('/request', requestRoutes);
 app.use('/events', eventsRoutes);
+
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {
@@ -43,7 +46,7 @@ app.get('/', (req, res) => res.send('Bienvenido! Para ver los mensajes del broke
 /events?page=<número página>&size=<número de cantidad de mensajes a mostrar>`. Por ejemplo: https://www.legitcities.ml/events?pages=1&size=25'))
 
 const server = app.listen(PORT, () => {
-  console.log('Server running on port 8080');
+  console.log(`Serving running on port ${PORT}`);
 });
 
 module.exports = { app, server };
