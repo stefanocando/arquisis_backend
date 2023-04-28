@@ -12,7 +12,7 @@ export default {
   },
   methods: {
     async submitForm() {
-      const { signup } = useAuth();
+      // const { signup } = useAuth();
       try {
         await signup({ email: this.email, password: this.password })
       } catch (error) {

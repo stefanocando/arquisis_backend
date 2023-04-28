@@ -1,6 +1,6 @@
 <script>
 import { RouterLink } from 'vue-router'
-// import { useAuth } from "@auth0/auth0-vue";
+import { useAuth } from "@auth0/auth0-vue";
 
 export default {
   data() {
@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     async submitForm() {
-      const { signup } = useAuth()
+      const { signup } = useAuth();
       try {
         await signup({ email: this.email, password: this.password })
       } catch (error) {
