@@ -5,34 +5,40 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const saveRequest = async(req, res, next) =>{
-  const info = req.body.info;
-  const {request_id, group_id, event_id, deposit_token, quantity, seller} = info;
-  const event = await db.Event.findOne({ where: { event_id: event_id } });
-  if (event === null){
-    res.json({message: 'Event not found!'});
-  } else {
-    if (group_id != 23){
-      const new_request = db.Request.build({
-        request_id: request_id,
-        group_id: group_id,
-        deposit_token: deposit_token,
-        quantity: quantity,
-        seller: seller,
-        event_id: event_id,
-      });
-      event.quantity = event.quantity - quantity;
-      try {
-        await new_request.save();
-        await event.save();
-        res.status(201).json({ message: "The request was succesfully created!" });
-      } catch (err) {
-        const error = new HttpError('Could not create request', 500);
-        return error;
-      }
+  try {
+    const info = req.body.info;
+    const {request_id, group_id, event_id, deposit_token, quantity, seller} = info;
+    const event = await db.Event.findOne({ where: { event_id: event_id } });
+    if (event === null){
+      res.json({message: 'Event not found!'});
     } else {
-      res.json({message: 'Request already exists!'});
+      if (group_id != 23){
+        const new_request = db.Request.build({
+          request_id: request_id,
+          group_id: group_id,
+          deposit_token: deposit_token,
+          quantity: quantity,
+          seller: seller,
+          event_id: event_id,
+        });
+        event.quantity = event.quantity - quantity;
+        try {
+          await new_request.save();
+          await event.save();
+          res.status(201).json({ message: "The request was succesfully created!" });
+        } catch (err) {
+          const error = new HttpError('Could not create request', 500);
+          return error;
+        }
+      } else {
+        res.json({message: 'Request already exists!'});
+      }
     }
+  } catch {
+    const error = new HttpError('Request in wrong format', 500);
+    return error;
   }
+  
 }
 
 const getAllRequest = async (req, res, next) => {

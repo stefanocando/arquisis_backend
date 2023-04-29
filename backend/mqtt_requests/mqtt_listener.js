@@ -20,20 +20,24 @@ client.on('connect', () => {
 });
 
 client.on('message', async (topic, payload) => {
-  let info = JSON.parse(payload);
   try {
-    const response = await axios.post(
-      'http://Server:8080/request',
-      {
-        info,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
+    let info = JSON.parse(payload);
+    try {
+      const response = await axios.post(
+        'http://Server:8080/request',
+        {
+          info,
         },
-      }
-    );
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
   } catch (err) {
-    console.log(err);
+    console.log("Request in wrong format");
   }
 });
