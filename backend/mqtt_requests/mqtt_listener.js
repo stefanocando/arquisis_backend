@@ -33,7 +33,6 @@ client.on('message', async (topic, payload) => {
         },
       }
     );
-    console.log(response.data);
   } catch (err) {
     console.log(err);
   }
