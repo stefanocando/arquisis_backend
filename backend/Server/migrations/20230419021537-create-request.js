@@ -2,38 +2,39 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Events', {
+    await queryInterface.createTable('Requests', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
+      group_id: {
         type: Sequelize.STRING
       },
-      date: {
-        type: Sequelize.DATE
-      },
-      price: {
-        type: Sequelize.FLOAT
+      deposit_token: {
+        type: Sequelize.STRING
       },
       quantity: {
-        type: Sequelize.FLOAT
+        type: Sequelize.INTEGER
       },
-      location: {
-        type: Sequelize.STRING
+      seller: {
+        type: Sequelize.INTEGER
       },
-      latitude: {
-        type: Sequelize.FLOAT
+      user_id: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
-      longitude: {
-        type: Sequelize.FLOAT
+      state: {
+        type: Sequelize.INTEGER
       },
-      event_id: {
+      request_id: {
         type: Sequelize.STRING,
         unique: true
       },
+      event_id: {
+        type: Sequelize.STRING,
+        references: {model: "Events", key: 'event_id'}},
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -45,6 +46,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Events');
+    await queryInterface.dropTable('Requests');
   }
 };
