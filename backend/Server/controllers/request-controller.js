@@ -73,7 +73,7 @@ const createRequest = async (req, res, next) => {
       deposit_token: deposit_token,
       quantity: quantity,
       seller: seller,
-      user_id: 1
+      user_id: "test_user"
     });
     event.quantity = event.quantity - quantity;
     try {
@@ -81,12 +81,13 @@ const createRequest = async (req, res, next) => {
       await event.save().then(() => {console.log("Event saved!")});
       await axios.post('http://MqttServer:9000/requests', request_data, {
         headers: {'Content-Type': 'application/json'}});
+      res.status(201).json({ message: "The request was succesfully created!" });
+      
     } catch (err) {
       const error = new HttpError('Could not create request', 500);
       return error;
     }
   }
-  res.status(201).json({ message: "The request was succesfully created!" });
 }
 
 
