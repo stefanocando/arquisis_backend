@@ -91,15 +91,15 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
     * Mostrar un mapa con los eventos de esa página tiene un bonus<sup>1</sup>  de (5 ptos)
 * **RF3 *(2 ptos) (Esencial)*:** Debe poder verse el detalle de cada evento y dar la opción de compra si hay entradas disponibles.
 * **RF4 *(2 ptos)*:** Deben poder mostrarle a su usuario las entradas compradas y si su solitud se completó correctamente. 
-* **RF5 *(3 ptos) (Esencial)*:** Al comprar una entrada se deberá enviar la solicitud por el canal `events/requests` y esperar la respuesta de si es válida por el canal `events/validation`.
-* **RF6 *(3 ptos) (Esencial)*:** Deberán estar escuchando los canales de `events/requests` y `events/validation` continuamente para ir actualizando su cantidad de entradas disponibles.
+* :white_check_mark: **RF5 *(3 ptos) (Esencial)*:** Al comprar una entrada se deberá enviar la solicitud por el canal `events/requests` y esperar la respuesta de si es válida por el canal `events/validation`.
+* :white_check_mark: **RF6 *(3 ptos) (Esencial)*:** Deberán estar escuchando los canales de `events/requests` y `events/validation` continuamente para ir actualizando su cantidad de entradas disponibles.
 
 
 ### Requisitos no funcionales (40 ptos)
 
 * **RNF01 *(6 ptos) (Esencial)*:** Deben usar un formato de Backend-Frontend separado: una API con respuestas JSON y un frontend. Esto es muy importante puesto que es crítico para las siguientes entregas. Usen un combo como Koa-React, Express-Flutter, FastAPI-Vue o cualquier otra combinación que les acomode. El Frontend debe ser ojalá una SPA **con un Framework que permita exportar el build de su frontend**.
 
-* **RNF02 *(2 ptos) (Esencial)*:** Sus aplicaciones en backend deben estar en un container docker, cada una. Debe coordinarse el levantamiento mediante docker compose.
+* :white_check_mark: **RNF02 *(2 ptos) (Esencial)*:** Sus aplicaciones en backend deben estar en un container docker, cada una. Debe coordinarse el levantamiento mediante docker compose.
 
 * **RNF03 *(2 ptos) (Esencial)*:** Deben tener configuradas *Budget alerts*, para no alejarse del Free tier de AWS.
 
