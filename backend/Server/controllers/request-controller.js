@@ -5,32 +5,93 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const saveRequest = async(req, res, next) =>{
-  const {request_id, group_id, event_id, deposit_token, quantity, seller, user_id} =
-    req.body.info
+  const info = req.body.info;
+  const {request_id, group_id, event_id, deposit_token, quantity, seller} = info;
+  const event = await db.Event.findOne({ where: { event_id: event_id } });
+  if (event === null){
+    res.json({message: 'Event not found!'});
+  } else {
+    if (group_id != 23){
+      const new_request = db.Request.build({
+        request_id: request_id,
+        group_id: group_id,
+        deposit_token: deposit_token,
+        quantity: quantity,
+        seller: seller,
+        event_id: event_id,
+      });
+      event.quantity = event.quantity - quantity;
+      try {
+        await new_request.save();
+        await event.save();
+        res.status(201).json({ message: "The request was succesfully created!" });
+      } catch (err) {
+        const error = new HttpError('Could not create request', 500);
+        return error;
+      }
+    } else {
+      res.json({message: 'Request already exists!'});
+    }
+  }
+}
+
+const getAllRequest = async (req, res, next) => {
+  let requests;
   try {
-    await db.Request.build({
-      request_id: request_id,
-      group_id: group_id,
-      event_id: event_id,
+    requests = await db.Request.findAll().then((request_list) => {
+      res.json({
+        request: request_list,
+      });
+    });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetch requests failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+}
+
+const createRequest = async (req, res, next) => {
+  const info = req.body;
+  const { user_id, event_id, deposit_token, quantity, seller } = info;
+  const request_data = {
+    "request_id": uuidv4(),
+    "group_id": "23",
+    "event_id": event_id,
+    "deposit_token": deposit_token,
+    "quantity": quantity,
+    "seller": 0
+  }
+  const event = await db.Event.findOne({ where: { event_id: event_id } });
+  if (event === null){
+    res.json({message: 'Event not found!'});
+  } else {
+    const new_request = await db.Request.build({
+      request_id: request_data.request_id,
+      group_id: request_data.group_id,
       deposit_token: deposit_token,
       quantity: quantity,
       seller: seller,
-      user_id: user_id,
-    }).then((new_request) => {
-      new_request.save();
+      user_id: 1
     });
-    await db.Event.findOne({ where: { event_id: event_id } }).then({
-      event_id : event_id,
-    }).then((event) => {event.quantity = event.quantity - quantity; event.save();});
-  } catch (err) {
-    const error = new HttpError('Could not create request', 500);
-    return next(error);
+    event.quantity = event.quantity - quantity;
+    try {
+      await new_request.save().then(() => {console.log("Request saved!")});
+      await event.save().then(() => {console.log("Event saved!")});
+      await axios.post('http://MqttServer:9000/requests', request_data, {
+        headers: {'Content-Type': 'application/json'}});
+    //   }).then((response) => {res.status(201).json({ message: "The request was succesfully created!" });
+    // });
+    } catch (err) {
+      const error = new HttpError('Could not create request', 500);
+      return error;
+    }
   }
   res.status(201).json({ message: "The request was succesfully created!" });
 }
 
-const createRequest = async (req, res, next) => {
-  
-}
 
+exports.saveRequest = saveRequest;
+exports.getAllRequest = getAllRequest;
 exports.createRequest = createRequest;

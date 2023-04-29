@@ -24,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     seller: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     state: DataTypes.INTEGER,
+    request_id: DataTypes.STRING,
+    event_id: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Request',

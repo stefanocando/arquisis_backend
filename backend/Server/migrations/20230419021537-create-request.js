@@ -22,10 +22,14 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       user_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       state: {
         type: Sequelize.INTEGER
+      },
+      request_id: {
+        type: Sequelize.STRING
       },
       event_id: {
         type: Sequelize.STRING,

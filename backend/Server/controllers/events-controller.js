@@ -5,10 +5,7 @@ const HttpError = require('../http-error');
 
 //Create event
 const createEvents = async (req, res, next) => {
-  const { name, date, price, quantity, location, latitude, longitude, event_id } =
-    req.body.info;
-  console.log(req.body.info);
-  console.log(event_id);
+  const { name, date, price, quantity, location, latitude, longitude, event_id } = req.body.info;
   const createdEvent = db.Event.build({
     name: name,
     date: date,
