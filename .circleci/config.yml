@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run:
           name: Install Dependencies
-          command: npx sequelize db:migrate && npm install
+          command: npm install
     
 workflows:
   sample: # This is the name of the workflow, feel free to change it to better match your workflow.
