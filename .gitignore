@@ -1,5 +1,5 @@
 # FRONTEND IGNORED FILES
-
+frontend/.env
 # Logs
 logs
 *.log
