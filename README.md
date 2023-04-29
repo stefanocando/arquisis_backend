@@ -2,7 +2,7 @@
 *aka. Procesamiento de Pagos como Eventos*
 
 ***Fecha de entrega:** 30/04/2023 - 4 Semanas*
-
+AA
 Después de un alto éxito en la obtención y recopilación de eventos, los contrata formalmente su consultora favorita LegitBusiness, y les pide que pasen a una versión mas poderosa de su plataforma. Dado que los eventos por si solos no presentan mucho valor para sus Stakeholders, se les ha pedido que mejoren su sistema para que permita a usuarios y clientes poder comprar las entradas usando sus servicios de pagos de forma que se puedan coordinar entre todos los grupos fácilmente.
 
 ## Objetivo
