@@ -11,7 +11,7 @@ orbs:
 jobs:
   build-and-test:
     docker:
-      - image: node:16-alpine
+      - image: circleci/node:16-alpine
       - image: postgres:latest
         environment:
             POSTGRES_PASSWORD: 12345678
@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run:
           name: Install Dependencies
-          command: npm start
+          command: npx sequelize db:migrate && npm install
     
 workflows:
   sample: # This is the name of the workflow, feel free to change it to better match your workflow.
