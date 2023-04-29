@@ -52,6 +52,32 @@ const getAllRequest = async (req, res, next) => {
   }
 }
 
+const getUserRequests = async (req, res, next) => {
+  let userinfo;
+  let userRequests;
+  try {
+    const accessToken = req.headers.authorization.split(' ')[1];
+    const response = await axios.get('https://dev-m7bbya2l02k3sm35.us.auth0.com/userinfo', {
+      headers: {
+        authorization: `Bearer ${accessToken}`
+      }
+    });
+    userinfo = response.data;
+    const userId = userinfo.sub.slice(6);
+    userRequests = await db.Request.findAll({ where: { user_id: userId } }).then((request_list) => {
+      res.json({
+        request: request_list,
+      });
+    });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetch requests failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+}
+
 const createRequest = async (req, res, next) => {
   const info = req.body;
   const { user_id, event_id, deposit_token, quantity, seller } = info;
@@ -67,13 +93,29 @@ const createRequest = async (req, res, next) => {
   if (event === null){
     res.json({message: 'Event not found!'});
   } else {
+    let userinfo;
+    try {
+      const accessToken = req.headers.authorization.split(' ')[1];
+      const response = await axios.get('https://dev-m7bbya2l02k3sm35.us.auth0.com/userinfo', {
+        headers: {
+          authorization: `Bearer ${accessToken}`
+        }
+      });
+      userinfo = response.data;
+    } catch (err) {
+      const error = new HttpError(
+        'Fetch requests failed, please try again later.',
+        500
+      );
+      return next(error);
+    }
     const new_request = await db.Request.build({
       request_id: request_data.request_id,
       group_id: request_data.group_id,
       deposit_token: deposit_token,
       quantity: quantity,
       seller: seller,
-      user_id: "test_user"
+      user_id: userinfo.sub.slice(6)
     });
     event.quantity = event.quantity - quantity;
     try {
@@ -94,3 +136,4 @@ const createRequest = async (req, res, next) => {
 exports.saveRequest = saveRequest;
 exports.getAllRequest = getAllRequest;
 exports.createRequest = createRequest;
+exports.getUserRequests = getUserRequests;
