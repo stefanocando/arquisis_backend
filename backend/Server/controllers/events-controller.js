@@ -18,7 +18,7 @@ const createEvents = async (req, res, next) => {
   });
   try {
     await createdEvent.save();
-    res.json({message: 'it works'})
+    res.json({message: 'Event created!'})
   } catch (err) {
     const error = new HttpError('Could not create event', 500);
     return error;

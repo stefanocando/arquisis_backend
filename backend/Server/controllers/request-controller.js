@@ -81,8 +81,6 @@ const createRequest = async (req, res, next) => {
       await event.save().then(() => {console.log("Event saved!")});
       await axios.post('http://MqttServer:9000/requests', request_data, {
         headers: {'Content-Type': 'application/json'}});
-    //   }).then((response) => {res.status(201).json({ message: "The request was succesfully created!" });
-    // });
     } catch (err) {
       const error = new HttpError('Could not create request', 500);
       return error;

@@ -14,7 +14,7 @@ const updateRequest = async (req, res, next) => {
         await request.save();
         res.json({message: 'Request validated!'});
       } catch (err) {
-        const error = new HttpError('Could update request status.', 500);
+        const error = new HttpError('Could not update request status.', 500);
         return error;
       }
     }
