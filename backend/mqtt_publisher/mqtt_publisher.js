@@ -12,13 +12,6 @@ const client = mqtt.connect(connectUrl, {
     reconnectPeriod: 1000,
   });
 
-client.on('connect', () => {
-    console.log('Connected');
-    client.subscribe('events/validation', () => {
-      console.log(`Subscribed to validations`);
-    });
-  });
-
 const app = express();
 
 app.use((req, res, next) => {
