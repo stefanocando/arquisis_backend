@@ -11,7 +11,7 @@ export default {
       data: '',
       token: '',
       currentPage: 1,
-      eventsPerPage: 25,
+      eventsPerPage: 3,
       events: [
         { id: 1, name: 'Event 1', date: '2023-05-01', location: 'Location 1' },
         { id: 2, name: 'Event 2', date: '2023-05-02', location: 'Location 2' },
@@ -21,14 +21,23 @@ export default {
         { id: 6, name: 'Event 6', date: '2023-05-06', location: 'Location 6' },
         { id: 7, name: 'Event 7', date: '2023-05-07', location: 'Location 7' },
         { id: 8, name: 'Event 8', date: '2023-05-08', location: 'Location 8' },
-        { id: 9, name: 'Event 9', date: '2023-05-09', location: 'Location 9' }
+        { id: 9, name: 'Event 9', date: '2023-05-09', location: 'Location 9' },
+        { id: 10, name: 'Event 10', date: '2023-05-09', location: 'Location 10' }
       ]
     }
   },
   methods: {
     async doSomethingWithToken() {
       const token = await this.$auth0.getAccessTokenSilently()
+      // const response = await fetch('https://stefanocando.me/request/user', {
+      //   mode: 'no-cors',
+      //   headers: {
+      //     Authorization: `Bearer ${token}`
+      //   }
+      // })
+      const response = await fetch('https://stefanocando.me/events?page=1')
       this.token = token
+      this.data = await response.json()
     },
     gotoPage(page) {
       this.currentPage = page
@@ -69,10 +78,17 @@ export default {
       <!-- User info section -->
       <div class="row mb-5">
         <div class="col-md-6 mx-auto text-center">
-          <img :src="user.picture" alt="User profile picture" height="50" width="50" class="rounded" />
+          <img
+            :src="user.picture"
+            alt="User profile picture"
+            height="50"
+            width="50"
+            class="rounded"
+          />
           <h3>{{ user.nickname }}</h3>
           <p class="lead">{{ user.email }}</p>
           <LogoutButton />
+          <button class="btn btn-primary" @click="doSomethingWithToken">Send request</button>
         </div>
       </div>
 
