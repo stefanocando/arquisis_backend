@@ -11,7 +11,7 @@ orbs:
 jobs:
   build-and-test:
     docker:
-      - image: circleci/node:16-alpine
+      - image: circleci/node:16
       - image: postgres:latest
         environment:
             POSTGRES_PASSWORD: 12345678
