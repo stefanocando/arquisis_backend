@@ -51,12 +51,40 @@ services:
   MqttServer:
     container_name: mqtt-server-ticketseller
     restart: unless-stopped
-    image: mqttt-server-ticketseller-dev:1.0.0
+    image: mqtt-server-ticketseller-dev:1.0.0
     build:
       context: mqtt_publisher
       dockerfile: Dockerfile
     ports:
       - 9000:9000
+    networks:
+      - shared-network
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    depends_on:
+      - Server
+
+  MqttRequests:
+    container_name: mqtt_requests
+    restart: unless-stopped
+    image: mqtt-requests-listener-dev:1.0.0
+    build:
+      context: ./mqtt_requests
+      dockerfile: Dockerfile
+    networks:
+      - shared-network
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    depends_on:
+      - Server
+
+  MqttValidations:
+    container_name: mqtt_validations
+    restart: unless-stopped
+    image: mqtt-validations-listener-dev:1.0.0
+    build:
+      context: ./mqtt_validations
+      dockerfile: Dockerfile
     networks:
       - shared-network
     volumes:

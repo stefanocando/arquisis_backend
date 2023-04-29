@@ -19,7 +19,6 @@ client.on('connect', () => {
     });
   });
 
-
 const app = express();
 
 app.use((req, res, next) => {
@@ -42,29 +41,12 @@ app.use(bodyParser.json());
 
 app.post("/requests", (req, res) => {
     const {request_id, group_id, event_id, deposit_token, quantity, seller} = req.body;
-    // const data = JSON.stringify(req.body);
-    const data = JSON.stringify(req.body.request_data);
-    let sendValidationRequest;
-    const responsePromise = new Promise((resolve, reject) => {
-      client.on('message', (topic, payload) => {
-      if (request_id === JSON.parse(payload).request_id) {
-        const response = JSON.parse(payload);
-        resolve(response);
-      }
-      sendValidationRequest = JSON.parse(payload);
-      res.json({sendValidationRequest})
+    const data = JSON.stringify(req.body);
+
+    client.publish('events/requests', data, () => {
+      console.log("Request enviada correctamente");
     });
-
-  });
-
-  client.publish('events/requests', data, () => {
-    console.log("Request enviada correctamente");
-  });
-
-  responsePromise
-    .then(response => console.log(response))
-    .catch(error => console.log(error.message));
-
+    res.status(201).json({ message: "The request was succesfully published!" });
 });
 
 app.listen(9000, () => {
