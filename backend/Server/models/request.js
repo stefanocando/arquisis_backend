@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     deposit_token: DataTypes.STRING,
     quantity: DataTypes.INTEGER,
     seller: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER,
+    user_id: DataTypes.STRING,
     state: DataTypes.INTEGER,
     request_id: DataTypes.STRING,
     event_id: DataTypes.STRING,
