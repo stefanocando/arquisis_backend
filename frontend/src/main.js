@@ -18,7 +18,7 @@ app.use(
     authorizationParams: {
       redirect_uri: import.meta.env.VITE_AUTH0_CALLBACK_URL
     },
-    audience: 'this is a unique identifier',
+    audience: import.meta.env.VITE_API_IDENTIFIER,
     scope: 'openid profile email'
   })
 )

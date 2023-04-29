@@ -13,9 +13,6 @@ export default {
     return {
       isAuthenticated: this.$auth0.isAuthenticated
     }
-  },
-  mounted() {
-    this.isAuthenticated = this.$auth0.isAuthenticated
   }
 }
 </script>
@@ -29,6 +26,7 @@ export default {
         <SignupButton />
       </div>
       <div v-else>
+        <RouterLink to="/profile" class="btn btn-primary">Perfil</RouterLink>
         <LogoutButton />
       </div>
     </div>
