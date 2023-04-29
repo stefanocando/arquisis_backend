@@ -47,7 +47,7 @@ Una vez que su usuario les compre la entrada, **deberán publicar en el broker e
 }
 ```
 
-En el body que mandará, `request_id` será un [uuid](https://www.howtogeek.com/devops/what-are-uuids-and-why-are-they-useful/) de su solicitud que manejarán ustedes que para cada una deberá ser distinta (en la sección de enlaces útiles hay links que les pueden servir), y `group_id` es su número de grupo. Finalmente `deposit_token` será un token que usarán para futuras entregas y que en está deben enviarlo como un string vacío. El atributo `selller` siempre deberá ser 0 para esta entrega.
+En el body que mandará, `request_id` será un [uuid](https://www.howtogeek.com/devops/what-are-uuids-and-why-are-they-useful/) de su solicitud que manejarán ustedes que para cada una deberá ser distinta (en la sección de enlaces útiles hay links que les pueden servir), y `group_id` es su número de grupo. Finalmente `deposit_token` será un token que usarán para futuras entregas y que en está deben enviarlo como un string vacío. El atributo `seller` siempre deberá ser 0 para esta entrega.
 
 Como todos los grupos mandarán mensajes por este canal, deberán estar escuchandolo para recibir las solicitudes de los otros grupos y disminuir su cantidad de entradas disponibles.
 
