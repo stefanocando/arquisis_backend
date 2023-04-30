@@ -11,20 +11,19 @@ export default {
     return {
       user: this.$auth0.user,
       data: '',
-      token: '',
-      loadingEvent: true,
+      loadingEvents: true,
       currentPage: 1
     }
   },
   methods: {
     fetchEvents(action) {
-      this.loadingEvent = true
+      this.loadingEvents = true
       action === 'prev' ? this.currentPage-- : this.currentPage++
       fetch(`https://stefanocando.me/events?page=${this.currentPage}`)
         .then((response) => response.json())
         .then((data) => {
           this.data = data.events
-          this.loadingEvent = false
+          this.loadingEvents = false
         })
         .catch((error) => {
           console.log(error)
@@ -33,24 +32,6 @@ export default {
     eventToQueryString(event) {
       const newParams = new URLSearchParams(event).toString()
       return newParams
-    },
-    async doSomethingWithToken() {
-      const token = await this.$auth0.getAccessTokenSilently()
-      const response = await fetch('https://stefanocando.me/request/user', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      try {
-        const baseUrl = import.meta.env('VITE_API_AUDIENCE')
-        const response = await fetch(`${baseUrl}events?page=0`)
-        this.token = token
-        this.data = (await response.json()).events
-      } catch (e) {
-        this.error = e
-      }
     }
   },
   mounted() {
@@ -58,7 +39,7 @@ export default {
       .then((response) => response.json())
       .then((data) => {
         this.data = data.events
-        this.loadingEvent = false
+        this.loadingEvents = false
       })
       .catch((error) => console.log(error))
   },
@@ -92,11 +73,12 @@ export default {
           <h3>{{ user.nickname }}</h3>
           <p class="lead">{{ user.email }}</p>
           <LogoutButton />
+          <RouterLink class="btn btn-link" to="/requests">Ir a tus solicitudes de compra</RouterLink>
         </div>
       </div>
 
       <!-- Events table section -->
-      <div v-if="loadingEvent">
+      <div v-if="loadingEvents">
         <div class="d-flex flex-column justify-content-center align-items-center vh-100">
           <div class="text-center spinner-border" role="status">
             <span class="visually-hidden">Cargando...</span>
@@ -110,12 +92,14 @@ export default {
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Nombre del evento</th>
+                <th>Código</th>
+                <th>Nombre</th>
                 <th>Fecha</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="event in data" :key="event.event_id">
+                <td>{{ event.event_id }}</td>
                 <td>
                   {{ event.name.length > 60 ? event.name.substring(0, 60) + '...' : event.name }}
                 </td>

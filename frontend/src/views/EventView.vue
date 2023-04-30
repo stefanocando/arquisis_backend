@@ -21,6 +21,7 @@ export default {
       buyingTickets: false,
       ticketsQuantity: 1,
       requestSend: false,
+      user: this.$auth0.user,
       errorMessage: ''
     }
   },
@@ -36,6 +37,7 @@ export default {
     async sendBuyingRequest() {
       if (this.buyingTickets) {
         const token = await this.$auth0.getAccessTokenSilently()
+        const userId = this.user.sub.split('|')[1]
         try {
           await fetch('https://stefanocando.me/request/new', {
             method: 'POST',
@@ -44,6 +46,7 @@ export default {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+              user_id: userId,
               event_id: this.event_id,
               deposit_token: '',
               quantity: this.ticketsQuantity,
@@ -53,27 +56,9 @@ export default {
           this.requestSend = true
         } catch (error) {
           this.errorMessage = error
-          console.log(error)
         }
       } else {
         this.buyingTickets = true
-      }
-    },
-    async getValidations() {
-      const token = await this.$auth0.getAccessTokenSilently()
-      try {
-        const response = await fetch('https://stefanocando.me/request/user', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        console.log(response)
-        this.requestSend = true
-      } catch (error) {
-        this.errorMessage = error
-        console.log(error)
       }
     }
   }
@@ -124,12 +109,11 @@ export default {
         </div>
         <div class="text-center">
           <button class="btn btn-primary mx-3" @click="sendBuyingRequest">Comprar entrada</button>
-          <RouterLink class="btn btn-secondary mx-3" to="/profile">Volver</RouterLink>
+          <RouterLink class="btn btn-link mx-3" to="/profile">Volver</RouterLink>
         </div>
         <div v-if="requestSend" class="text-center my-3">
           Se ha enviado una solicitud para comprar entradas {{ errorMessage }}
         </div>
-        <button @click="getValidations">Print validaciones</button>
       </div>
     </div>
   </div>
