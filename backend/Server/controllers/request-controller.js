@@ -63,7 +63,7 @@ const getUserRequests = async (req, res, next) => {
   let userRequests;
   try {
     const accessToken = req.headers.authorization.split(' ')[1];
-    const response = await axios.get('https://dev-m7bbya2l02k3sm35.us.auth0.com/userinfo', {
+    const response = await axios.get('https://dev-50f4e6m1x3lgsmgu.us.auth0.com/userinfo', {
       headers: {
         authorization: `Bearer ${accessToken}`
       }
@@ -102,7 +102,7 @@ const createRequest = async (req, res, next) => {
     let userinfo;
     try {
       const accessToken = req.headers.authorization.split(' ')[1];
-      const response = await axios.get('https://dev-m7bbya2l02k3sm35.us.auth0.com/userinfo', {
+      const response = await axios.get('https://dev-50f4e6m1x3lgsmgu.us.auth0.com/userinfo', {
         headers: {
           authorization: `Bearer ${accessToken}`
         }
