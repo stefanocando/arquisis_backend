@@ -3,7 +3,7 @@ const events = require('../models/event');
 const HttpError = require('../http-error');
 
 const updateRequest = async (req, res, next) => {
-    await wait(15000);
+    await wait(25000);
     const { request_id, group_id, seller, valid } = req.body.info;
     const request = await db.Request.findOne({ where: { request_id: request_id } })
     if (request === null) {
@@ -11,7 +11,11 @@ const updateRequest = async (req, res, next) => {
     }
     else {
       try {
-        request.valid = valid;
+        let value = 0;
+        if (valid) {
+          value = 1;
+        }
+        request.valid = value;
         await request.save();
         res.json({message: 'Request validated!'});
       } catch (err) {
