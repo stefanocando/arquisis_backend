@@ -34,13 +34,13 @@ export default {
     },
     async doSomethingWithToken() {
       const token = await this.$auth0.getAccessTokenSilently()
-      // const response = await fetch('https://stefanocando.me/request/user', {
-      //   mode: 'no-cors',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   }
-      // })
-      // console.log(`Bearer ${token}`);
+      const response = await fetch('https://stefanocando.me/request/user', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       try {
         const baseUrl = import.meta.env('VITE_API_AUDIENCE')
         const response = await fetch(`${baseUrl}events?page=0`)
