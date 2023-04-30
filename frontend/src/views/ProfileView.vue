@@ -20,7 +20,6 @@ export default {
     fetchEvents(action) {
       this.loadingEvent = true
       action === 'prev' ? this.currentPage-- : this.currentPage++
-      console.log(this.currentPage)
       fetch(`https://stefanocando.me/events?page=${this.currentPage}`)
         .then((response) => response.json())
         .then((data) => {
@@ -28,9 +27,12 @@ export default {
           this.loadingEvent = false
         })
         .catch((error) => {
-          console.log('error')
           console.log(error)
         })
+    },
+    eventToQueryString(event) {
+      const newParams = new URLSearchParams(event).toString()
+      return newParams
     },
     async doSomethingWithToken() {
       const token = await this.$auth0.getAccessTokenSilently()
@@ -90,7 +92,6 @@ export default {
           <h3>{{ user.nickname }}</h3>
           <p class="lead">{{ user.email }}</p>
           <LogoutButton />
-          <button class="btn btn-primary" @click="doSomethingWithToken">Send request</button>
         </div>
       </div>
 
@@ -114,12 +115,18 @@ export default {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="event in data" :key="event.id">
+              <tr v-for="event in data" :key="event.event_id">
                 <td>
                   {{ event.name.length > 60 ? event.name.substring(0, 60) + '...' : event.name }}
                 </td>
                 <td>{{ event.date.split('T')[0] }}</td>
-                <td><RouterLink class="btn btn-primary" to="/">Más información</RouterLink></td>
+                <td>
+                  <RouterLink
+                    class="btn btn-outline-primary"
+                    :to="'/event?' + eventToQueryString(event)"
+                    >Más información</RouterLink
+                  >
+                </td>
               </tr>
             </tbody>
           </table>

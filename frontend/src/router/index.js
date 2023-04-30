@@ -22,6 +22,24 @@ const router = createRouter({
       name: 'profile',
       component: ProfileView,
       beforeEnter: authGuard
+    },
+    {
+      path: '/event',
+      name: 'event',
+      component: () => import('@/views/EventView.vue'),
+      props: (route) => ({
+        event_id: route.query.event_id,
+        name: route.query.name,
+        date: route.query.date,
+        price: +route.query.price,
+        quantity: +route.query.quantity,
+        location: route.query.location,
+        latitude: +route.query.latitude,
+        longitude: +route.query.longitude,
+        createdAt: route.query.createdAt,
+        updatedAt: route.query.updatedAt
+      }),
+      beforeEnter: authGuard
     }
   ]
 })
