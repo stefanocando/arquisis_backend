@@ -1,32 +1,37 @@
 <script>
 import LogoutButton from '@/components/buttons/LogoutButton.vue'
+import { RouterLink } from 'vue-router'
 
 export default {
   components: {
-    LogoutButton
+    LogoutButton,
+    RouterLink
   },
   data() {
     return {
       user: this.$auth0.user,
       data: '',
       token: '',
-      currentPage: 1,
-      eventsPerPage: 3,
-      events: [
-        { id: 1, name: 'Event 1', date: '2023-05-01', location: 'Location 1' },
-        { id: 2, name: 'Event 2', date: '2023-05-02', location: 'Location 2' },
-        { id: 3, name: 'Event 3', date: '2023-05-03', location: 'Location 3' },
-        { id: 4, name: 'Event 4', date: '2023-05-04', location: 'Location 4' },
-        { id: 5, name: 'Event 5', date: '2023-05-05', location: 'Location 5' },
-        { id: 6, name: 'Event 6', date: '2023-05-06', location: 'Location 6' },
-        { id: 7, name: 'Event 7', date: '2023-05-07', location: 'Location 7' },
-        { id: 8, name: 'Event 8', date: '2023-05-08', location: 'Location 8' },
-        { id: 9, name: 'Event 9', date: '2023-05-09', location: 'Location 9' },
-        { id: 10, name: 'Event 10', date: '2023-05-09', location: 'Location 10' }
-      ]
+      loadingEvent: true,
+      currentPage: 1
     }
   },
   methods: {
+    fetchEvents(action) {
+      this.loadingEvent = true
+      action === 'prev' ? this.currentPage-- : this.currentPage++
+      console.log(this.currentPage)
+      fetch(`https://stefanocando.me/events?page=${this.currentPage}`)
+        .then((response) => response.json())
+        .then((data) => {
+          this.data = data.events
+          this.loadingEvent = false
+        })
+        .catch((error) => {
+          console.log('error')
+          console.log(error)
+        })
+    },
     async doSomethingWithToken() {
       const token = await this.$auth0.getAccessTokenSilently()
       // const response = await fetch('https://stefanocando.me/request/user', {
@@ -35,23 +40,25 @@ export default {
       //     Authorization: `Bearer ${token}`
       //   }
       // })
-      const response = await fetch('https://stefanocando.me/events?page=1')
-      this.token = token
-      this.data = await response.json()
-    },
-    gotoPage(page) {
-      this.currentPage = page
-    },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++
+      // console.log(`Bearer ${token}`);
+      try {
+        const baseUrl = import.meta.env('VITE_API_AUDIENCE')
+        const response = await fetch(`${baseUrl}events?page=0`)
+        this.token = token
+        this.data = (await response.json()).events
+      } catch (e) {
+        this.error = e
       }
     }
+  },
+  mounted() {
+    fetch('https://stefanocando.me/events?page=0')
+      .then((response) => response.json())
+      .then((data) => {
+        this.data = data.events
+        this.loadingEvent = false
+      })
+      .catch((error) => console.log(error))
   },
   computed: {
     code() {
@@ -62,18 +69,13 @@ export default {
     },
     totalPages() {
       return this.pages === 0 ? 1 : this.pages
-    },
-    displayedEvents() {
-      const startIndex = (this.currentPage - 1) * this.eventsPerPage
-      const endIndex = startIndex + this.eventsPerPage
-      return this.events.slice(startIndex, endIndex)
     }
   }
 }
 </script>
 
 <template>
-  <div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="d-flex flex-column justify-content-center align-items-center">
     <div class="container">
       <!-- User info section -->
       <div class="row mb-5">
@@ -93,40 +95,41 @@ export default {
       </div>
 
       <!-- Events table section -->
-      <div class="row">
-        <div class="col-md-12">
-          <h4>Events</h4>
+      <div v-if="loadingEvent">
+        <div class="d-flex flex-column justify-content-center align-items-center vh-100">
+          <div class="text-center spinner-border" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <div>Cargando eventos</div>
+        </div>
+      </div>
+      <div v-else class="row">
+        <div class="col-md-10">
+          <h4>Eventos</h4>
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Location</th>
+                <th>Nombre del evento</th>
+                <th>Fecha</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="event in displayedEvents" :key="event.id">
-                <td>{{ event.name }}</td>
-                <td>{{ event.date }}</td>
-                <td>{{ event.location }}</td>
+              <tr v-for="event in data" :key="event.id">
+                <td>
+                  {{ event.name.length > 60 ? event.name.substring(0, 60) + '...' : event.name }}
+                </td>
+                <td>{{ event.date.split('T')[0] }}</td>
+                <td><RouterLink class="btn btn-primary" to="/">Más información</RouterLink></td>
               </tr>
             </tbody>
           </table>
           <nav aria-label="Page navigation">
             <ul class="pagination">
               <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                <a class="page-link" href="#" @click.prevent="prevPage">Previous</a>
+                <a class="page-link" href="#" @click.prevent="fetchEvents('prev')">Previo</a>
               </li>
-              <li
-                class="page-item"
-                v-for="page in pages"
-                :key="page"
-                :class="{ active: currentPage === page }"
-              >
-                <a class="page-link" href="#" @click.prevent="gotoPage(page)">{{ page }}</a>
-              </li>
-              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+              <li class="page-item">
+                <a class="page-link" href="#" @click.prevent="fetchEvents('next')">Siguiente</a>
               </li>
             </ul>
           </nav>
