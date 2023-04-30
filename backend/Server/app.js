@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require("cors");
 dotenv.config();
 
 const eventsRoutes = require('./routes/events-routes');
@@ -12,6 +13,8 @@ const PORT = process.env.PORT || 5000;
 // const PORT = 8080;
 
 const app = express();
+
+app.use(cors());
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

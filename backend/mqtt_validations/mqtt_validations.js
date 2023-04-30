@@ -22,6 +22,7 @@ client.on('connect', () => {
 client.on('message', async (topic, payload) => {
   try {
     let info = JSON.parse(payload);
+    console.log("Validation in correct format")
     try {
       const response = await axios.post(
         'http://Server:8080/validations',
@@ -33,7 +34,7 @@ client.on('message', async (topic, payload) => {
             'Content-Type': 'application/json',
           },
         }
-      );
+      ).then((res) => {console.log(res.data.message);});
     } catch (err) {
       console.log(err);
     }
