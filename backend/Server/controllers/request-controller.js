@@ -98,6 +98,7 @@ const createRequest = async (req, res, next) => {
       deposit_token: deposit_token,
       quantity: quantity,
       seller: seller,
+      event_id: event_id,
       user_id: user_id
     });
     event.quantity = event.quantity - quantity;
