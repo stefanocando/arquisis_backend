@@ -19,18 +19,18 @@ const router = express.Router()
 //   algorithms: ['RS256']
 // });
 
-const jwtCheck = auth({
-  audience: 'https://stefanocando.me/',
-  issuerBaseURL: 'https://dev-50f4e6m1x3lgsmgu.us.auth0.com/',
-  tokenSigningAlg: 'RS256'
-});
+// const jwtCheck = auth({
+//   audience: 'https://stefanocando.me/',
+//   issuerBaseURL: 'https://dev-50f4e6m1x3lgsmgu.us.auth0.com/',
+//   tokenSigningAlg: 'RS256'
+// });
 
 router.post('/', requestController.saveRequest);
 
 router.get('/all', requestController.getAllRequest);
 
-router.post('/new', jwtCheck, requestController.createRequest);
+router.post('/new', requestController.createRequest);
 
-router.get('/user', jwtCheck, requestController.getUserRequests);
+router.get('/user', requestController.getUserRequests);
 
 module.exports = router
