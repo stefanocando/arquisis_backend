@@ -59,17 +59,10 @@ const getAllRequest = async (req, res, next) => {
 }
 
 const getUserRequests = async (req, res, next) => {
-  let userinfo;
+  const userId = req.params.id;
   let userRequests;
+  console.log(userId);
   try {
-    const accessToken = req.headers.authorization.split(' ')[1];
-    const response = await axios.get('https://dev-50f4e6m1x3lgsmgu.us.auth0.com/userinfo', {
-      headers: {
-        authorization: `Bearer ${accessToken}`
-      }
-    });
-    userinfo = response.data;
-    const userId = userinfo.sub.slice(6);
     userRequests = await db.Request.findAll({ where: { user_id: userId } }).then((request_list) => {
       res.json({
         request: request_list,
@@ -99,29 +92,13 @@ const createRequest = async (req, res, next) => {
   if (event === null){
     res.json({message: 'Event not found!'});
   } else {
-    let userinfo;
-    try {
-      const accessToken = req.headers.authorization.split(' ')[1];
-      const response = await axios.get('https://dev-50f4e6m1x3lgsmgu.us.auth0.com/userinfo', {
-        headers: {
-          authorization: `Bearer ${accessToken}`
-        }
-      });
-      userinfo = response.data;
-    } catch (err) {
-      const error = new HttpError(
-        'Fetch requests failed, please try again later.',
-        500
-      );
-      return next(error);
-    }
     const new_request = await db.Request.build({
       request_id: request_data.request_id,
       group_id: request_data.group_id,
       deposit_token: deposit_token,
       quantity: quantity,
       seller: seller,
-      user_id: userinfo.sub.slice(6)
+      user_id: user_id
     });
     event.quantity = event.quantity - quantity;
     try {

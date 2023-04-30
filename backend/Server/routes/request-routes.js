@@ -31,6 +31,6 @@ router.get('/all', requestController.getAllRequest);
 
 router.post('/new', requestController.createRequest);
 
-router.get('/user', requestController.getUserRequests);
+router.get('/user/:id', requestController.getUserRequests);
 
 module.exports = router
