@@ -1,35 +1,37 @@
-# frontend
+# frontend-ticket-seller
 
 This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
+## Correr el proyecto localmente
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### Ir al directorio del frontend.
 
-## Customize configuration
+```sh
+cd e1-2023-1-grupo-23/frontend
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+```
 
-## Project Setup
+### Copiar lo siguiente en un archivo `.env` en el directorio raíz del repositorio.
+
+```
+VITE_API_SERVER_URL=http://localhost:8000
+VITE_AUTH0_DOMAIN=dev-50f4e6m1x3lgsmgu.us.auth0.com
+VITE_AUTH0_CLIENT_ID=pLjAz4iRagIEUEN8pnWrAah8MLiA7cMt
+VITE_AUTH0_CALLBACK_URL=http://localhost:5173/callback
+VITE_API_AUDIENCE=https://stefanocando.me/
+
+```
+
+### Instalar las dependencias.
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Levantar un servidor local
 
-```sh
-npm run dev
+```
+npm run dev -- --port 5173
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+PD: *es importante levantar el servidor en el puerto 5173 por temas de configuración de auth0*
