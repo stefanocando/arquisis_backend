@@ -1,23 +1,25 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
+<script>
+import { RouterView } from 'vue-router'
+
+export default {
+  components: {
+    RouterView
+  },
+  data() {
+    return {
+      isLoading: this.$auth0.isLoading
+    }
+  }
+}
 </script>
 
 <template>
-  <main>
-    <nav class="navbar navbar-expand-lg bg-light">
-      <div class="container-fluid">
-        <RouterLink class="navbar-brand" to="/">TicketSeller</RouterLink>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs>
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <RouterLink class="nav-link" to="/about">About</RouterLink>
-          </div>
-        </div>
+  <div v-if="isLoading">
+    <div class="d-flex justify-content-center align-items-center vh-100">
+      <div class="text-center spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
-    </nav>
-  </main>
-  <RouterView />
+    </div>
+  </div>
+  <RouterView v-else />
 </template>
