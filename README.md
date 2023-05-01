@@ -108,10 +108,12 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
 
 * 🟢 **RNF03 *(2 ptos) (Esencial)*:** Deben tener configuradas *Budget alerts*, para no alejarse del Free tier de AWS.
 
-* **RNF04** (***6 ptos***) ***(Esencial)*** : Su API debe estar detrás de una AWS API gateway tipo REST, con los endpoints declarados en esta. Debe asociarse un subdominio a esta (e.g. api.miapp.com) y debe tener CORS correctamente configurado.
+* 🟡**RNF04** (***6 ptos***) ***(Esencial)*** : Su API debe estar detrás de una AWS API gateway tipo REST, con los endpoints declarados en esta. Debe asociarse un subdominio a esta (e.g. api.miapp.com) y debe tener CORS correctamente configurado.
+    - Existe una API gateway apuntando a la API, sin embargo no se logró confirgurar el CORS, por lo que no se puede utilizar ni tampoco se pueden realizar las verificaciones de usuario con Auth0.
 
-* 🟢 **RNF05** (***7 ptos***) ***(Esencial)***: Deben implementar un servicio de autenticacion/autorización (auth). Este servicio puede ser en base a un servicio de terceros como Auth0, cognito o pueden hacerlo ustedes. Este RNF requiere que ustedes extraigan toda la lógica de los usuarios de la app principal y la trasladen a el servicio hecho por ustedes o el externo. Recomendamos fuertemente usar el modelo Oauth o como mínimo intercambiar tokens JWT con la audiencia e issuer correctos.
+* 🟡 **RNF05** (***7 ptos***) ***(Esencial)***: Deben implementar un servicio de autenticacion/autorización (auth). Este servicio puede ser en base a un servicio de terceros como Auth0, cognito o pueden hacerlo ustedes. Este RNF requiere que ustedes extraigan toda la lógica de los usuarios de la app principal y la trasladen a el servicio hecho por ustedes o el externo. Recomendamos fuertemente usar el modelo Oauth o como mínimo intercambiar tokens JWT con la audiencia e issuer correctos.
     * Si hacen un servicio ustedes desde 0, tienen un bonus de **5 ptos**.
+    - El auth0 está implementado, pero al no servir la API gateway no se utiliza realmente.
 
 * 🟡 **RNF06** (***3 ptos***): Su frontend debe estar desplegado en S3 con una distribución Cloudfront. 
 	- Esta desplegado en S3 con una distribución Cloudfront el frontend, pero debido a una falla en la configuración del https, una librería de auth0 no puede funcionar en un origen http. En el siguiente link esta la app :[TicketSeller](http://homemadeticketsellerbucket.s3-website-us-east-1.amazonaws.com/)
@@ -120,7 +122,7 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
 
 * **RNF08** (***3 ptos***) ***(Esencial)*** : Su app debe ofrecer su backend y frontend utilizando HTTPS
 
-* **RNF09 *(8 ptos)*:** Deben implementar un pipeline de CI. Como proveedores aceptados están CircleCI, Github Actions y AWS codebuild. Recomendamos los dos primeros porque los ayudantes tienen experiencia en estos dos. Esta implementación debe correr un script que genere una imagen para containers de su servicio
+* 🟢**RNF09 *(8 ptos)*:** Deben implementar un pipeline de CI. Como proveedores aceptados están CircleCI, Github Actions y AWS codebuild. Recomendamos los dos primeros porque los ayudantes tienen experiencia en estos dos. Esta implementación debe correr un script que genere una imagen para containers de su servicio
     * Implementar un test trivial que pueda fallar (tipo `assert false` o similar) tiene un bonus de **3 ptos**
 
 ### Documentación (6 ptos)
