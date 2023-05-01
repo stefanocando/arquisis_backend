@@ -59,7 +59,9 @@ const getAllRequest = async (req, res, next) => {
 }
 
 const getUserRequests = async (req, res, next) => {
-  const userId = req.params.id;
+  let {id} = req.query;
+  console.log(id);
+  const userId = id;
   let userRequests;
   console.log(userId);
   try {
