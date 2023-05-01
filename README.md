@@ -86,31 +86,37 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
 
 ### Requisitos funcionales (14 ptos)
 
-* **RF1 *(2 ptos) (Esencial)*:** Sus usuarios deben poder registrarse en la plataforma con datos de contacto y un correo electrónico
-* **RF2 *(2 ptos)*:** Los usuarios deben poder ver una lista paginada (de a 25 eventos) de los eventos disponibles en el servidor por orden de llegada.
+🟢 : Logrado
+🟡 : Medianamente Logrado
+🔴 : No logrado
+
+
+* 🟢 **RF1 *(2 ptos) (Esencial)*:** Sus usuarios deben poder registrarse en la plataforma con datos de contacto y un correo electrónico
+* 🟢 **RF2 *(2 ptos)*:** Los usuarios deben poder ver una lista paginada (de a 25 eventos) de los eventos disponibles en el servidor por orden de llegada.
     * Mostrar un mapa con los eventos de esa página tiene un bonus<sup>1</sup>  de (5 ptos)
-* **RF3 *(2 ptos) (Esencial)*:** Debe poder verse el detalle de cada evento y dar la opción de compra si hay entradas disponibles.
-* **RF4 *(2 ptos)*:** Deben poder mostrarle a su usuario las entradas compradas y si su solitud se completó correctamente. 
-* :white_check_mark: **RF5 *(3 ptos) (Esencial)*:** Al comprar una entrada se deberá enviar la solicitud por el canal `events/requests` y esperar la respuesta de si es válida por el canal `events/validation`.
-* :white_check_mark: **RF6 *(3 ptos) (Esencial)*:** Deberán estar escuchando los canales de `events/requests` y `events/validation` continuamente para ir actualizando su cantidad de entradas disponibles.
+* 🟢**RF3 *(2 ptos) (Esencial)*:** Debe poder verse el detalle de cada evento y dar la opción de compra si hay entradas disponibles.
+* 🟢**RF4 *(2 ptos)*:** Deben poder mostrarle a su usuario las entradas compradas y si su solitud se completó correctamente. 
+* 🟢 **RF5 *(3 ptos) (Esencial)*:** Al comprar una entrada se deberá enviar la solicitud por el canal `events/requests` y esperar la respuesta de si es válida por el canal `events/validation`.
+* 🟢 **RF6 *(3 ptos) (Esencial)*:** Deberán estar escuchando los canales de `events/requests` y `events/validation` continuamente para ir actualizando su cantidad de entradas disponibles.
 
 
 ### Requisitos no funcionales (40 ptos)
 
-* **RNF01 *(6 ptos) (Esencial)*:** Deben usar un formato de Backend-Frontend separado: una API con respuestas JSON y un frontend. Esto es muy importante puesto que es crítico para las siguientes entregas. Usen un combo como Koa-React, Express-Flutter, FastAPI-Vue o cualquier otra combinación que les acomode. El Frontend debe ser ojalá una SPA **con un Framework que permita exportar el build de su frontend**.
+* 🟢 **RNF01 *(6 ptos) (Esencial)*:** Deben usar un formato de Backend-Frontend separado: una API con respuestas JSON y un frontend. Esto es muy importante puesto que es crítico para las siguientes entregas. Usen un combo como Koa-React, Express-Flutter, FastAPI-Vue o cualquier otra combinación que les acomode. El Frontend debe ser ojalá una SPA **con un Framework que permita exportar el build de su frontend**.
 
-* :white_check_mark: **RNF02 *(2 ptos) (Esencial)*:** Sus aplicaciones en backend deben estar en un container docker, cada una. Debe coordinarse el levantamiento mediante docker compose.
+* 🟢 **RNF02 *(2 ptos) (Esencial)*:** Sus aplicaciones en backend deben estar en un container docker, cada una. Debe coordinarse el levantamiento mediante docker compose.
 
-* **RNF03 *(2 ptos) (Esencial)*:** Deben tener configuradas *Budget alerts*, para no alejarse del Free tier de AWS.
+* 🟢 **RNF03 *(2 ptos) (Esencial)*:** Deben tener configuradas *Budget alerts*, para no alejarse del Free tier de AWS.
 
 * **RNF04** (***6 ptos***) ***(Esencial)*** : Su API debe estar detrás de una AWS API gateway tipo REST, con los endpoints declarados en esta. Debe asociarse un subdominio a esta (e.g. api.miapp.com) y debe tener CORS correctamente configurado.
 
-* **RNF05** (***7 ptos***) ***(Esencial)***: Deben implementar un servicio de autenticacion/autorización (auth). Este servicio puede ser en base a un servicio de terceros como Auth0, cognito o pueden hacerlo ustedes. Este RNF requiere que ustedes extraigan toda la lógica de los usuarios de la app principal y la trasladen a el servicio hecho por ustedes o el externo. Recomendamos fuertemente usar el modelo Oauth o como mínimo intercambiar tokens JWT con la audiencia e issuer correctos.
+* 🟢 **RNF05** (***7 ptos***) ***(Esencial)***: Deben implementar un servicio de autenticacion/autorización (auth). Este servicio puede ser en base a un servicio de terceros como Auth0, cognito o pueden hacerlo ustedes. Este RNF requiere que ustedes extraigan toda la lógica de los usuarios de la app principal y la trasladen a el servicio hecho por ustedes o el externo. Recomendamos fuertemente usar el modelo Oauth o como mínimo intercambiar tokens JWT con la audiencia e issuer correctos.
     * Si hacen un servicio ustedes desde 0, tienen un bonus de **5 ptos**.
 
-* **RNF06** (***3 ptos***): Su frontend debe estar desplegado en S3 con una distribución Cloudfront.
+* 🟡 **RNF06** (***3 ptos***): Su frontend debe estar desplegado en S3 con una distribución Cloudfront. 
+	- Esta desplegado en S3 con una distribución Cloudfront el frontend, pero debido a una falla en la configuración del https, una librería de auth0 no puede funcionar en un origen http.
 
-* **RNF07** (***3 ptos***): Su API Gateway debe poder usar al servicio del RNF05 para autenticar a los usuarios directamente.
+* 🟢 **RNF07** (***3 ptos***): Su API Gateway debe poder usar al servicio del RNF05 para autenticar a los usuarios directamente.
 
 * **RNF08** (***3 ptos***) ***(Esencial)*** : Su app debe ofrecer su backend y frontend utilizando HTTPS
 
@@ -121,9 +127,9 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
 
 Todos estos documentos los deben dejar dentro de su repositorio de Github en una carpeta `/docs`. 
 
-* **RDOC01 *(3 ptos)*:** Deben crear un diagrama UML  de componentes de la entrega, con **explicaciones y detalle** sobre el sistema. Esto deben tenerlo para la fecha final de entrega.
+* 🟢 **RDOC01 *(3 ptos)*:** Deben crear un diagrama UML  de componentes de la entrega, con **explicaciones y detalle** sobre el sistema. Esto deben tenerlo para la fecha final de entrega.
 * **RDOC02 *(2 ptos)*:** Deben documentar los pasos necesarios para replicar el pipe CI que usaron en su aplicación (Qué pasos sigue si CI).
-* **RDOC03 *(1 ptos)*:** Deben dejar una documentación de alguna forma de correr su aplicación en un ambiente local para propósitos de testeo (que instalar, que poner en el .env, como correr la app, etc).
+* 🟢 **RDOC03 *(1 ptos)*:** Deben dejar una documentación de alguna forma de correr su aplicación en un ambiente local para propósitos de testeo (que instalar, que poner en el .env, como correr la app, etc).
 
 
 ## Recomendaciones
