@@ -114,7 +114,7 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
     * Si hacen un servicio ustedes desde 0, tienen un bonus de **5 ptos**.
 
 * 🟡 **RNF06** (***3 ptos***): Su frontend debe estar desplegado en S3 con una distribución Cloudfront. 
-	- Esta desplegado en S3 con una distribución Cloudfront el frontend, pero debido a una falla en la configuración del https, una librería de auth0 no puede funcionar en un origen http.
+	- Esta desplegado en S3 con una distribución Cloudfront el frontend, pero debido a una falla en la configuración del https, una librería de auth0 no puede funcionar en un origen http. En el siguiente link esta la app :[TicketSeller](http://homemadeticketsellerbucket.s3-website-us-east-1.amazonaws.com/)
 
 * 🟢 **RNF07** (***3 ptos***): Su API Gateway debe poder usar al servicio del RNF05 para autenticar a los usuarios directamente.
 
