@@ -114,6 +114,7 @@ Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para
 * 🟡 **RNF05** (***7 ptos***) ***(Esencial)***: Deben implementar un servicio de autenticacion/autorización (auth). Este servicio puede ser en base a un servicio de terceros como Auth0, cognito o pueden hacerlo ustedes. Este RNF requiere que ustedes extraigan toda la lógica de los usuarios de la app principal y la trasladen a el servicio hecho por ustedes o el externo. Recomendamos fuertemente usar el modelo Oauth o como mínimo intercambiar tokens JWT con la audiencia e issuer correctos.
     * Si hacen un servicio ustedes desde 0, tienen un bonus de **5 ptos**.
     - El auth0 está implementado, pero al no servir la API gateway no se utiliza realmente.
+    - Finalmente se dejo la autentificación en el backend.
 
 * 🟡 **RNF06** (***3 ptos***): Su frontend debe estar desplegado en S3 con una distribución Cloudfront. 
 	- Esta desplegado en S3 con una distribución Cloudfront el frontend, pero debido a una falla en la configuración del https, una librería de auth0 no puede funcionar en un origen http. En el siguiente link esta la app :[TicketSeller](http://homemadeticketsellerbucket.s3-website-us-east-1.amazonaws.com/)
