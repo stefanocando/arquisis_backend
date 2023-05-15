@@ -1,6 +1,3 @@
-# FRONTEND IGNORED FILES
-frontend/.env
-
 # Logs
 logs
 *.log
@@ -19,11 +16,6 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
-
-# BACKEND IGNORED FILES
-
-
-# PROJECT IGNORED FILES
 
 # Editor directories and files
 .vscode/
