@@ -15,7 +15,7 @@ const updateRequest = async (req, res, next) => {
         if (valid) {
           value = 1;
         }
-        request.valid = value;
+        request.state = value;
         await request.save();
         res.json({message: 'Request validated!'});
       } catch (err) {
