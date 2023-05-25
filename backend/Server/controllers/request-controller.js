@@ -92,26 +92,39 @@ const createRequest = async (req, res, next) => {
   if (event === null){
     res.json({message: 'Event not found!'});
   } else {
-    const new_request = await db.Request.build({
-      request_id: request_data.request_id,
-      group_id: request_data.group_id,
-      deposit_token: deposit_token,
-      quantity: quantity,
-      seller: seller,
-      event_id: event_id,
-      user_id: user_id
-    });
-    event.quantity = event.quantity - quantity;
-    try {
-      await new_request.save().then(() => {console.log("Request saved!")});
-      await event.save().then(() => {console.log("Event saved!")});
-      await axios.post('http://MqttServer:9000/requests', request_data, {
-        headers: {'Content-Type': 'application/json'}});
-      res.json({ message: "The request was succesfully created!" });
-      
-    } catch (err) {
-      const error = new HttpError('Could not create request', 500);
-      return error;
+    if (event.quantity <= quantity) {
+      res.json({message: 'Not enough tickets!'});
+    } else {
+      const user = await db.User.findOne({ where: { user_id: user_id } });
+      if (user === null){
+        res.json({message: 'User not found!'});
+      } else {
+        if (user.balance < quantity * event.price){
+          res.json({message: 'Not enough balance!'});
+        } else {
+          const new_request = await db.Request.build({
+            request_id: request_data.request_id,
+            group_id: request_data.group_id,
+            deposit_token: deposit_token,
+            quantity: quantity,
+            seller: seller,
+            event_id: event_id,
+            user_id: user_id
+          });
+          event.quantity = event.quantity - quantity;
+          try {
+            await new_request.save().then(() => {console.log("Request saved!")});
+            await event.save().then(() => {console.log("Event saved!")});
+            await axios.post('http://MqttServer:9000/requests', request_data, {
+              headers: {'Content-Type': 'application/json'}});
+            res.json({ message: "The request was succesfully created!" });
+            
+          } catch (err) {
+            const error = new HttpError('Could not create request', 500);
+            return error;
+          }
+        }
+      }
     }
   }
 }
