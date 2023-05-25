@@ -2,6 +2,7 @@ const db = require('../models/index');
 const HttpError = require('../http-error');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+const e = require('express');
 
 
 const saveRequest = async(req, res, next) =>{
@@ -41,6 +42,7 @@ const saveRequest = async(req, res, next) =>{
   
 }
 
+// Esta request es solo de prueba
 const getAllRequest = async (req, res, next) => {
   let requests;
   try {
@@ -79,7 +81,6 @@ const getUserRequests = async (req, res, next) => {
 const createRequest = async (req, res, next) => {
   const info = req.body;
   const { user_id, event_id, deposit_token, quantity, seller } = info;
-  console.log(info);
   const request_data = {
     "request_id": uuidv4(),
     "group_id": "23",
@@ -88,14 +89,39 @@ const createRequest = async (req, res, next) => {
     "quantity": quantity,
     "seller": 0
   }
+
   const event = await db.Event.findOne({ where: { event_id: event_id } });
   if (event === null){
     res.json({message: 'Event not found!'});
   } else {
+
+
+      // IMPLEMENTAR
+    // Verificar que quedan entradas
+    // verificar si tiene dinero suficiente**********
+
+    // if (tiene dinero){
+
+
+    // } else {
+    //   res.status(201).json({message: 'Not enough money!'});
+    // }
+    
+    const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
+      "group_id": "23",
+      "seller": "0",
+      "event_id": event_id,
+      "quantity": quantity,
+      "value": event.price,
+    }, {
+      headers: {'Content-Type': 'application/json'}});
+    console.log(payment_data.data);
+
+    const d_token = payment_data.data.deposit_token;
     const new_request = await db.Request.build({
       request_id: request_data.request_id,
       group_id: request_data.group_id,
-      deposit_token: deposit_token,
+      deposit_token: d_token,
       quantity: quantity,
       seller: seller,
       event_id: event_id,
@@ -108,6 +134,9 @@ const createRequest = async (req, res, next) => {
       await axios.post('http://MqttServer:9000/requests', request_data, {
         headers: {'Content-Type': 'application/json'}});
       res.json({ message: "The request was succesfully created!" });
+
+      // Despues de crear la request, se debe crear el realizar las pruebas criptograficas*****
+      // IMPLEMENTAR
       
     } catch (err) {
       const error = new HttpError('Could not create request', 500);
