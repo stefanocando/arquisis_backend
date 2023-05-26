@@ -27,9 +27,11 @@ const router = express.Router()
 
 router.post('/', requestController.saveRequest);
 
-
-
+// router.post('/new', jwtCheck, requestController.createRequest);
 router.post('/new', requestController.createRequest);
+
+// router.get('/user/:id', jwtCheck, requestController.getUserRequests);
+router.get('/user/:id', requestController.getUserRequests);
 
 router.get('/user/:id', requestController.getUserRequests);
 
