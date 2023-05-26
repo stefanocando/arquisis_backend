@@ -43,3 +43,6 @@ const addMoney = async (req, res, next) => {
         return error;
     }
 }
+
+exports.createUsers = createUsers;
+exports.addMoney = addMoney;
