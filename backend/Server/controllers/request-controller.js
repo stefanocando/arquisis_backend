@@ -79,7 +79,7 @@ const getUserRequests = async (req, res, next) => {
 }
 
 const createRequest = async (req, res, next) => {
-  const info = req.body;
+  const info = req.body.user_id;
   const { user_id, event_id, deposit_token, quantity, seller } = info;
   const request_data = {
     "request_id": uuidv4(),
