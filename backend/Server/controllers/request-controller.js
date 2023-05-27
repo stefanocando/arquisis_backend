@@ -61,7 +61,7 @@ const getAllRequest = async (req, res, next) => {
 }
 
 const getUserRequests = async (req, res, next) => {
-  const userId = req.params.id;
+  const userId = req.body.user_id;
   let userRequests;
   try {
     userRequests = await db.Request.findAll({ where: { user_id: userId } }).then((request_list) => {
