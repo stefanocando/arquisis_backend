@@ -7,6 +7,7 @@ dotenv.config();
 const eventsRoutes = require('./routes/events-routes');
 const requestRoutes = require('./routes/request-routes');
 const validationsRoutes = require('./routes/validation-routes');
+const userRoutes = require('./routes/user-routes');
 
 
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.use(bodyParser.json());
 app.use('/request', requestRoutes);
 app.use('/events', eventsRoutes);
 app.use('/validations', validationsRoutes);
+app.use('/user', userRoutes);
 
 
 app.use((error, req, res, next) => {

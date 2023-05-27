@@ -1,5 +1,4 @@
 const db = require('../models/index');
-const events = require('../models/event');
 const HttpError = require('../http-error');
 
 const updateRequest = async (req, res, next) => {
@@ -14,9 +13,27 @@ const updateRequest = async (req, res, next) => {
         let value = 0;
         if (valid) {
           value = 1;
+        } else {
+          try {
+            console.log("Trying to return money");
+            const user = await db.User.findOne({ where: { user_id: request.user_id } })
+            if (user === null){
+              console.log("User not found!");
+            }
+            else {
+              const event = await db.Event.findOne({ where: { event_id: request.event_id } })
+              user.money += request.quantity * event.price;
+              await user.save();}
+          } catch (err) {
+              const error = new HttpError('Could not return money.', 500);
+              return error;
+          }
         }
         request.state = value;
         await request.save();
+        // Aqui se debe enviar un mail de confirmacion al usuario
+        // IMPLEMENTAR
+
         res.json({message: 'Request validated!'});
       } catch (err) {
         const error = new HttpError('Could not update request status.', 500);
