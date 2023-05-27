@@ -1,5 +1,4 @@
 const db = require('../models/index');
-const events = require('../models/event');
 const HttpError = require('../http-error');
 
 const updateRequest = async (req, res, next) => {
@@ -18,8 +17,13 @@ const updateRequest = async (req, res, next) => {
           try {
             console.log("Trying to return money");
             const user = await db.User.findOne({ where: { user_id: request.user_id } })
-            const event = await db.Event.findOne({ where: { event_id: request.event_id } })
-            user.balance += request.quantity * event.price;
+            if (user === null){
+              console.log("User not found!");
+            }
+            else {
+              const event = await db.Event.findOne({ where: { event_id: request.event_id } })
+              user.money += request.quantity * event.price;
+              await user.save();}
           } catch (err) {
               const error = new HttpError('Could not return money.', 500);
               return error;
