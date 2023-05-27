@@ -101,7 +101,7 @@ const createRequest = async (req, res, next) => {
       if (user === null){
         res.json({message: 'User not found!'});
       } else {
-        if (user.balance < quantity * event.price){
+        if (user.money < quantity * event.price){
           res.json({message: 'Not enough balance!'});
         } else {
           const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
