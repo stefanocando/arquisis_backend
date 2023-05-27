@@ -94,53 +94,51 @@ const createRequest = async (req, res, next) => {
   if (event === null){
     res.json({message: 'Event not found!'});
   } else {
+    if (event.quantity <= quantity) {
+      res.json({message: 'Not enough tickets!'});
+    } else {
+      const user = await db.User.findOne({ where: { user_id: user_id } });
+      if (user === null){
+        res.json({message: 'User not found!'});
+      } else {
+        if (user.balance < quantity * event.price){
+          res.json({message: 'Not enough balance!'});
+        } else {
+          const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
+            "group_id": "23",
+            "seller": "0",
+            "event_id": event_id,
+            "quantity": quantity,
+            "value": event.price,
+          }, {
+            headers: {'Content-Type': 'application/json'}});
+          console.log(payment_data.data);
 
+          const d_token = payment_data.data.deposit_token;
+          const new_request = await db.Request.build({
+            request_id: request_data.request_id,
+            group_id: request_data.group_id,
+            deposit_token: deposit_token,
+            quantity: quantity,
+            seller: seller,
+            event_id: event_id,
+            user_id: user_id
+          });
+          event.quantity = event.quantity - quantity;
+          try {
+            await new_request.save().then(() => {console.log("Request saved!")});
+            await event.save().then(() => {console.log("Event saved!")});
+            await axios.post('http://MqttServer:9000/requests', request_data, {
+              headers: {'Content-Type': 'application/json'}});
+            res.json({ message: "The request was succesfully created!" });
+            
+          } catch (err) {
+            const error = new HttpError('Could not create request', 500);
+            return error;
+          }
+        }
+      }
 
-      // IMPLEMENTAR
-    // Verificar que quedan entradas
-    // verificar si tiene dinero suficiente**********
-
-    // if (tiene dinero){
-
-
-    // } else {
-    //   res.status(201).json({message: 'Not enough money!'});
-    // }
-    
-    const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
-      "group_id": "23",
-      "seller": "0",
-      "event_id": event_id,
-      "quantity": quantity,
-      "value": event.price,
-    }, {
-      headers: {'Content-Type': 'application/json'}});
-    console.log(payment_data.data);
-
-    const d_token = payment_data.data.deposit_token;
-    const new_request = await db.Request.build({
-      request_id: request_data.request_id,
-      group_id: request_data.group_id,
-      deposit_token: d_token,
-      quantity: quantity,
-      seller: seller,
-      event_id: event_id,
-      user_id: user_id
-    });
-    event.quantity = event.quantity - quantity;
-    try {
-      await new_request.save().then(() => {console.log("Request saved!")});
-      await event.save().then(() => {console.log("Event saved!")});
-      await axios.post('http://MqttServer:9000/requests', request_data, {
-        headers: {'Content-Type': 'application/json'}});
-      res.json({ message: "The request was succesfully created!" });
-
-      // Despues de crear la request, se debe crear el realizar las pruebas criptograficas*****
-      // IMPLEMENTAR
-      
-    } catch (err) {
-      const error = new HttpError('Could not create request', 500);
-      return error;
     }
   }
 }
