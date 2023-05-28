@@ -1,138 +1,61 @@
-# 2023-1 / IIC2173 - E1 | PPE Ticket Seller
-*aka. Procesamiento de Pagos como Eventos*
+# 2023-1 / IIC2173 - E2 | CPE Ticket Seller
+*aka.* Coordinación de Pagos en base a Eventos 
 
-***Fecha de entrega:** 30/04/2023 - 4 Semanas*
-AA
-Después de un alto éxito en la obtención y recopilación de eventos, los contrata formalmente su consultora favorita LegitBusiness, y les pide que pasen a una versión mas poderosa de su plataforma. Dado que los eventos por si solos no presentan mucho valor para sus Stakeholders, se les ha pedido que mejoren su sistema para que permita a usuarios y clientes poder comprar las entradas usando sus servicios de pagos de forma que se puedan coordinar entre todos los grupos fácilmente.
+🟢 : Logrado 🟡 : Medianamente Logrado 🔴 : No logrado
 
-## Objetivo
+## Requisitos funcionales (13 ptos)
+- **RF01 (3 ptos) (Esencial):** Cada usuario debe tener la capacidad de agregar dinero a una
+"billetera" dentro de su aplicación.
+- **RF02 (2 ptos) (Esencial):** Cuando un usuario compre una entrada dentro de su aplicación, se
+debe validar que tenga el dinero suficiente en su billetera, y si es así, descontarle el dinero
+internamente para enviarlo a la API central.
+- **RF03 (3 ptos) (Esencial):** Para validar su compra deben hacer la llamada como se explica
+previamente y realizar el cálculo de los challenges mediante workers.
+- **RF04 (2 ptos):** Debe haber un indicador que muestre si el servicio maestro de workers está
+disponible.
+- **RF05 (3 ptos):** Los usuarios deben poder descargar su entrada si esta se validó
+correctamente desde su vista de compras.
 
-Deben extender su API web para que sea capaz de conectarse a un canal del broker para publicar sus solicitudes de compra, y luego validarlos con mensajes que les enviaremos desde otro canal.
+## Requisitos no funcionales (38 ptos)
+- **RNF01 (15 ptos):** Deben crear el servicio que hace el cálculo de la prueba criptográfica de
+pagos indicada en el enunciado, el cual asigna tareas a workers, lleva el registro de trabajos y
+los resultados. Este servicio existe en un container independiente, se conecta via HTTP
+ofreciendo una API REST y posee workers conectados mediante un broker con capacidad de
+encolado/pubsub (Redis/rabbitMQ), así como conexión a la base de datos del backend
+principal.
+    - Separar los workers en contenedores propios tiene un bonus de 5 ptos
+- **RNF02 (4 ptos):** Una vez que se reciba una validación de un pago hecho en su aplicación,
+deberán enviar una notificación vía correo a los usuarios que lo solicitaron.
 
-Utilizando a la conexión que ya poseen con el broker de eventos, su app debe seguir recolectando los datos según el formato de la E0:
+- 🟡 **RNF03 (5 ptos):** La aplicación tiene que ofrecer un servicio de generacion de tickets PDF
+desde AWS Lambda (como los que genera la página kupos.cl). Este ticket debe tener el
+nombre de su grupo y los datos del usuario y la entrada que compró. Además, debe
+almacenarse en S3 y se le debe entregar al usuario un enlace público para descargarlo desde
+S3. Deben utilizar Serverless.js o AWS SAM para manejar y desplegar esta función.
+    - Crear un pipe CI/CD para este servicio tiene un bonus de 4 ptos
 
-```json
-{
-   "name": string,
-   "date": string (ISO 8601 https://es.wikipedia.org/wiki/ISO_8601),
-   "price": number,
-   "quantity": number,
-   "location": string,
-   "latitude": number,
-   "longitude": number
-},
-```
+- **RNF04 (9 ptos):** Deben implementar CD en su pipeline CI/CD para backend. Como
+proveedores aceptados de CI están Github Actions, Codebuild y CircleCI. Para deployment
+deben usar AWS codedeploy.
 
-Usando esta data, le presentará a los usuarios una lista de los eventos, de forma paginada en una interfaz de usuario. Los usuarios podrán escoger un evento y solicitar la compra de entradas que se explicará en la siguiente sección.
+- 🟢 **RNF05 (5 ptos):** Deben implementar CD en su pipeline CI/CD para frontend. Como
+proveedores aceptados de CI están Github Actions, Codebuild y CircleCI. Para deployment
+deben subir su frontend a AWS S3 e invalidar la caché de Cloudfront que sirve su frontend.
 
-Será importante manejar una correcta gestión de usuarios, y para evitar problemas de colapso en su aplicación deberán usar un servicio de terceros y conectarlo con su aplicación mediante una API Gateway.
+## Documentación (9 ptos)
+Todos estos documentos los deben dejar dentro de su repositorio de Github en una carpeta /docs
+para la fecha de entrega.
+- **RDOC1 (2 ptos):** Deben actualizar su diagrama UML de componentes con lo realizado en esta
+entrega, con explicaciones y detalle sobre el sistema.
 
-Adicionalmente, para empezar a lograr un proceso de implementación más expedita de su proyecto, se les pedirá que creen su solución en frontend y backend separados, además de implementar un proceso de *Continuous Integration*.
+- 🟡 **RDOC2 (2 ptos):** Deben actualizar su documentación del pipeline CI para incluir los pasos
+extras necesarios para la realización del CD.
 
-### Solicitudes de Compra de Entradas
+-🟢 **RDOC3 (2 ptos):** Deben incluir una documentación de cómo subir su aplicación en
+Serverless/SAM, paso a paso
 
-El flujo para la compra de una entrada consistirá en poder manejar una integración masiva entre diversas apps que estarán queriendo vender entradas. Para esto se les pedirá que se conecten a un nuevo canal de broker con un nuevo script para que puedan publicar eventos de solicitud de compra, y que luego reciban por otro canal las validaciones de las solicitudes de compra correspondientes.
-
-Para explicar el flujo la idea es que un usuario ya ingresado en su aplicación vea un evento que le interese y aprete en su detalle donde saldrá la opción de compra. Luego de indicar cuantas entradas quiere, ustedes en su aplicación gestionarán si les paga correctamente y su asignación a ese usuario. Ahora viene lo entretenido, validarlo entre todos.
-
-Una vez que su usuario les compre la entrada, **deberán publicar en el broker en el canal `events/requests`** que su aplicación quiere comprar una entrada con el siguiente formato:
-```json
-{
-    "request_id": string (token de idempotencia),
-    "group_id": string (número de grupo),
-    "event_id": string,
-    "deposit_token": "",
-    "quantity": number,
-    "seller": 0
-}
-```
-
-En el body que mandará, `request_id` será un [uuid](https://www.howtogeek.com/devops/what-are-uuids-and-why-are-they-useful/) de su solicitud que manejarán ustedes que para cada una deberá ser distinta (en la sección de enlaces útiles hay links que les pueden servir), y `group_id` es su número de grupo. Finalmente `deposit_token` será un token que usarán para futuras entregas y que en está deben enviarlo como un string vacío. El atributo `seller` siempre deberá ser 0 para esta entrega.
-
-Como todos los grupos mandarán mensajes por este canal, deberán estar escuchandolo para recibir las solicitudes de los otros grupos y disminuir su cantidad de entradas disponibles.
-
-**Para poder validar las compras, tendrán que escuchar el canal `events/validation`.** Acá se les enviarán respuestas en el formato:
-```json
-{
-    "request_id": string,
-    "group_id": string,
-    "seller": 0,
-    "valid": bool (indica si fue válida la solicitud)
-}
-```
-
-Si reciben una respuesta de que esa transacción es válida, entonces deben marcarla como completada. En otro caso (solicitud inválida), deberán marcarla como que no se logró y deberán volver a disponibilizar las entradas que tenía ese evento.
-
-### Requisito de Integración Continua
-
-Para el requisito de continuous integration, les recomendamos usar los siguientes proveedores junto a su repo de GitHub (esto para evitar cobros):
-
-* CircleCI
-    * (*Habra cápsula disponible*)
-    * No tiene minutos por organización, así que podrán usarlo al 100% aprovechando los minutos gratis
-* Github Actions
-
-## Ejemplo de flujo a nivel de usuario
-
-Un usuario ingresa en la plataforma con credenciales creadas anteriormente a su aplicación. Este va a una lista de eventos disponibles y los revisa página por página. Para comenzar, escogera uno y revisara el detalle de este. Tendrá la opción de poder comprar entradas a este evento si quedan cupos. Se gestionará su "pago" y se le que su compra está en proceso. Finalmente, luego de un rato, el usuario revisará y su compra se marcará como completada correctamente o no.
-
-## Especificaciones
-
-**Si un requisito está marcado como *Esencial*, el no cumplirlo en un grado mínimo (al menos un punto) reducirá la nota máxima a *4.0*. NO se revisaran entregas que no estén en la nube.**
-
-Por otro lado, debido a que esta entrega presenta una buena cantidad de *bonus*, la nota no puede sumar más de 8, para que decidan bien que les gustaría aprovechar.
-
-Al final de la entrega, la idea es que se pongan de acuerdo con su ayudante para agendar una hora y hacer una demo en vivo para su corrección. Se revisarán algunas features esenciales de código (conexión al broker). Pueden utilizar Github Copilot (recomendado) para multiplicar su productividad y ChatGPT (poco recomendado) para dudas de implementacion.
-
-### Requisitos funcionales (14 ptos)
-
-🟢 : Logrado
-🟡 : Medianamente Logrado
-🔴 : No logrado
-
-
-* 🟢 **RF1 *(2 ptos) (Esencial)*:** Sus usuarios deben poder registrarse en la plataforma con datos de contacto y un correo electrónico
-* 🟢 **RF2 *(2 ptos)*:** Los usuarios deben poder ver una lista paginada (de a 25 eventos) de los eventos disponibles en el servidor por orden de llegada.
-    * Mostrar un mapa con los eventos de esa página tiene un bonus<sup>1</sup>  de (5 ptos)
-* 🟢**RF3 *(2 ptos) (Esencial)*:** Debe poder verse el detalle de cada evento y dar la opción de compra si hay entradas disponibles.
-* 🟢**RF4 *(2 ptos)*:** Deben poder mostrarle a su usuario las entradas compradas y si su solitud se completó correctamente. 
-* 🟢 **RF5 *(3 ptos) (Esencial)*:** Al comprar una entrada se deberá enviar la solicitud por el canal `events/requests` y esperar la respuesta de si es válida por el canal `events/validation`.
-* 🟢 **RF6 *(3 ptos) (Esencial)*:** Deberán estar escuchando los canales de `events/requests` y `events/validation` continuamente para ir actualizando su cantidad de entradas disponibles.
-
-
-### Requisitos no funcionales (40 ptos)
-
-* 🟢 **RNF01 *(6 ptos) (Esencial)*:** Deben usar un formato de Backend-Frontend separado: una API con respuestas JSON y un frontend. Esto es muy importante puesto que es crítico para las siguientes entregas. Usen un combo como Koa-React, Express-Flutter, FastAPI-Vue o cualquier otra combinación que les acomode. El Frontend debe ser ojalá una SPA **con un Framework que permita exportar el build de su frontend**.
-
-* 🟢 **RNF02 *(2 ptos) (Esencial)*:** Sus aplicaciones en backend deben estar en un container docker, cada una. Debe coordinarse el levantamiento mediante docker compose.
-
-* 🟢 **RNF03 *(2 ptos) (Esencial)*:** Deben tener configuradas *Budget alerts*, para no alejarse del Free tier de AWS.
-
-* 🟡**RNF04** (***6 ptos***) ***(Esencial)*** : Su API debe estar detrás de una AWS API gateway tipo REST, con los endpoints declarados en esta. Debe asociarse un subdominio a esta (e.g. api.miapp.com) y debe tener CORS correctamente configurado.
-    - Existe una API gateway apuntando a la API, sin embargo no se logró confirgurar el CORS, por lo que no se puede utilizar ni tampoco se pueden realizar las verificaciones de usuario con Auth0.
-
-* 🟡 **RNF05** (***7 ptos***) ***(Esencial)***: Deben implementar un servicio de autenticacion/autorización (auth). Este servicio puede ser en base a un servicio de terceros como Auth0, cognito o pueden hacerlo ustedes. Este RNF requiere que ustedes extraigan toda la lógica de los usuarios de la app principal y la trasladen a el servicio hecho por ustedes o el externo. Recomendamos fuertemente usar el modelo Oauth o como mínimo intercambiar tokens JWT con la audiencia e issuer correctos.
-    * Si hacen un servicio ustedes desde 0, tienen un bonus de **5 ptos**.
-    - El auth0 está implementado, pero al no servir la API gateway no se utiliza realmente.
-    - Finalmente se dejo la autentificación en el backend.
-
-* 🟡 **RNF06** (***3 ptos***): Su frontend debe estar desplegado en S3 con una distribución Cloudfront. 
-	- Esta desplegado en S3 con una distribución Cloudfront el frontend, pero debido a una falla en la configuración del https, una librería de auth0 no puede funcionar en un origen http. En el siguiente link esta la app :[TicketSeller](http://homemadeticketsellerbucket.s3-website-us-east-1.amazonaws.com/)
-
-* 🟢 **RNF07** (***3 ptos***): Su API Gateway debe poder usar al servicio del RNF05 para autenticar a los usuarios directamente.
-
-* **RNF08** (***3 ptos***) ***(Esencial)*** : Su app debe ofrecer su backend y frontend utilizando HTTPS
-
-* 🟢**RNF09 *(8 ptos)*:** Deben implementar un pipeline de CI. Como proveedores aceptados están CircleCI, Github Actions y AWS codebuild. Recomendamos los dos primeros porque los ayudantes tienen experiencia en estos dos. Esta implementación debe correr un script que genere una imagen para containers de su servicio
-    * Implementar un test trivial que pueda fallar (tipo `assert false` o similar) tiene un bonus de **3 ptos**
-
-### Documentación (6 ptos)
-
-Todos estos documentos los deben dejar dentro de su repositorio de Github en una carpeta `/docs`. 
-
-* 🟢 **RDOC01 *(3 ptos)*:** Deben crear un diagrama UML  de componentes de la entrega, con **explicaciones y detalle** sobre el sistema. Esto deben tenerlo para la fecha final de entrega.
-* **RDOC02 *(2 ptos)*:** Deben documentar los pasos necesarios para replicar el pipe CI que usaron en su aplicación (Qué pasos sigue si CI).
-* 🟢 **RDOC03 *(1 ptos)*:** Deben dejar una documentación de alguna forma de correr su aplicación en un ambiente local para propósitos de testeo (que instalar, que poner en el .env, como correr la app, etc).
+- **RDOC4 (3 ptos):** Deben documentar todas las posibles llamadas a sus APIs expuestas a sus
+clientes con algún estandar (Postman, Swagger u otra)
 
 
 ## Recomendaciones
