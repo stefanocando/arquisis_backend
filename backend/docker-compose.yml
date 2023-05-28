@@ -99,7 +99,7 @@ services:
     networks:
       - shared-network
     deploy:
-      replicas: 2
+      replicas: 3
   
   redis:
     image: redis
