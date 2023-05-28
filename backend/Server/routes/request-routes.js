@@ -1,7 +1,7 @@
 const express = require('express');
-const jwks = require('jwks-rsa');
-const { expressjwt: jwt } = require('express-jwt');
-const { auth } = require("express-oauth2-jwt-bearer");
+// const jwks = require('jwks-rsa');
+// const { expressjwt: jwt } = require('express-jwt');
+// const { auth } = require("express-oauth2-jwt-bearer");
 
 const requestController = require('../controllers/request-controller')
 
@@ -29,6 +29,8 @@ router.post('/', requestController.saveRequest);
 
 // router.post('/new', jwtCheck, requestController.createRequest);
 router.post('/new', requestController.createRequest);
+
+router.post('/ticket', requestController.getTicket);
 
 // router.get('/user/:id', jwtCheck, requestController.getUserRequests);
 router.post('/user', requestController.getUserRequests);
