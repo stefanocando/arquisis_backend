@@ -18,6 +18,22 @@ const createUsers = async (req, res, next) => {
     }
 }
 
+const getUser = async (req, res, next) => {
+    const id = req.params.id
+
+    try {
+        const user = await db.Request.findAll({ where: { user_id: id } }).then((users) => {
+            res.json({
+                user: users[0]
+            });
+        });
+    } catch (err) {
+        const error = new HttpError("Fetch user failed, please try again later", 500);
+        return error;
+    }
+
+}
+
 const addMoney = async (req, res, next) => {
     try {
         const { user_id, money } = req.body;
@@ -42,4 +58,5 @@ const addMoney = async (req, res, next) => {
 }
 
 exports.createUsers = createUsers;
+exports.getUser = getUser;
 exports.addMoney = addMoney;
