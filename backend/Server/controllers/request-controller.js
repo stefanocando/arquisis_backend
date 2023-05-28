@@ -79,7 +79,7 @@ const getUserRequests = async (req, res, next) => {
 }
 
 const createRequest = async (req, res, next) => {
-  const info = req.body.user_id;
+  const info = req.body;
   const { user_id, event_id, deposit_token, quantity, seller } = info;
   const request_data = {
     "request_id": uuidv4(),
@@ -89,21 +89,27 @@ const createRequest = async (req, res, next) => {
     "quantity": quantity,
     "seller": 0
   }
+  console.log(request_data);
 
   const event = await db.Event.findOne({ where: { event_id: event_id } });
   if (event === null){
+    console.log('Event not found!');
     res.json({message: 'Event not found!'});
   } else {
+    console.log(event);
     if (event.quantity <= quantity) {
       res.json({message: 'Not enough tickets!'});
     } else {
       const user = await db.User.findOne({ where: { user_id: user_id } });
       if (user === null){
+        console.log("User not found!");
         res.json({message: 'User not found!'});
       } else {
         if (user.money < quantity * event.price){
           res.json({message: 'Not enough balance!'});
         } else {
+          console.log("Enviando payment data!");
+
           const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
             "group_id": "23",
             "seller": "0",
