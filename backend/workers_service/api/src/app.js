@@ -9,7 +9,7 @@ const queue = new Queue('Cryptographic Test', {
   connection: {
     host: 'localhost',
     port: 6379,
-    password: 'password',
+    password: '12345678',
   },
 });
 
@@ -25,21 +25,32 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
 
 app.use('/admin/queues', serverAdapter.getRouter());
 
-app.post('/jobs', async (req, res) => {
+app.post('/job', async (req, res) => {
   try {
     const jobData = req.body;
-
-    // Agrega el trabajo a la cola
-    const job = await queue.add('challenge', jobData.data);
-    // Envía una respuesta de éxito
-    res.sendStatus(200);
+    const job = await queue.add('challenge', jobData);
+    res.json({ id: job.id });
   } catch (error) {
     console.error('Error al crear el trabajo:', error);
     res.sendStatus(500);
   }
 });
 
-// Inicia el servidor en el puerto 3000
+app.get('/job/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const job = await queue.getJob(id);
+    res.json(job);
+  } catch (error) {
+    console.error('Error al obtener el trabajo:', error);
+    res.sendStatus(500);
+  }
+});
+
+app.get('/heartbeat', (req, res) => {
+  res.json({ status: true });
+});
+
 app.listen(3000, () => {
   console.log('Servidor escuchando en puerto 3000');
 });
