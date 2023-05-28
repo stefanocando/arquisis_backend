@@ -1,9 +1,21 @@
 const { Worker, Job } = require('bullmq');
 const crypto = require('crypto');
+const axios = require('axios');
 
 function calculateHash(deposit_token, challenge_id, secret) {
   const hashInput = `deposit_token=${deposit_token}&challenge_id=${challenge_id}&secret=${secret}`;
   return crypto.createHash('sha256').update(hashInput).digest('hex');
+}
+
+async function postMethod(job_result, url) {
+  try {
+    const response = await axios.post(url, job_result, {
+      headers: {'Content-Type': 'application/json'}
+    });
+    console.log('Respuesta del servidor:', response.data);
+  } catch (error) {
+      console.error('Error al enviar la solución:', error);
+  }
 }
 
 /**
@@ -40,7 +52,7 @@ async function processor(job) {
     "deposit_token": deposit_token,
     "challenges": secrets
   }
-  return { solution };
+  return solution;
 }
 
 const connection = {
@@ -58,6 +70,10 @@ console.log('Worker iniciado.');
 
 worker.on('completed', (job) => {
   console.log('Trabajo completado:', job.id, job.returnvalue);
+  const job_result = job.returnvalue;
+  const url = 'https://api.legit.capital/v1/challenges/solution';
+
+  postMethod(job_result, url);
 });
 
 worker.on("failed", (job, error) => {
