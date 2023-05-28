@@ -3,27 +3,24 @@ const HttpError = require('../http-error');
 
 const createUsers = async (req, res, next) => {
     try {
-        const { user_id, email, } = req.body.info;
+        console.log(req.body.info);
+        const { user_id, email, } = req.body;
         const createdUser = db.User.build({
             user_id: user_id,
             email: email,
             money: 0,
         });
-        try {
             await createdUser.save();
-            res.json({message: 'User created!'});
-        } catch (err) {
-            console.log(err);
-    }
+            res.status(201).json({message: 'User created!'});
     } catch {
-        const error = new HttpError('User in wrong format', 500);
+        const error = new HttpError('Failed to create user', 500);
         return error;
     }
 }
 
 const addMoney = async (req, res, next) => {
     try {
-        const { user_id, money } = req.body.info;
+        const { user_id, money } = req.body;
         const user = await db.User.findOne({ where: { user_id: user_id } })
         if (user === null) {
             res.json({message: 'User does not exist!'});
