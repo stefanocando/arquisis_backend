@@ -7,7 +7,7 @@ const { ExpressAdapter } = require("@bull-board/express");
 const app = express();
 const queue = new Queue('Cryptographic Test', {
   connection: {
-    host: 'localhost',
+    host: 'redis',
     port: 6379,
     password: '12345678',
   },
@@ -40,7 +40,7 @@ app.get('/job/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const job = await queue.getJob(id);
-    res.json(job);
+    res.json({ job_result: job.returnvalue });
   } catch (error) {
     console.error('Error al obtener el trabajo:', error);
     res.sendStatus(500);

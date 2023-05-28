@@ -40,11 +40,11 @@ async function processor(job) {
     "deposit_token": deposit_token,
     "challenges": secrets
   }
-  return { result: solution };
+  return { solution };
 }
 
 const connection = {
-  host: 'localhost',
+  host: 'redis',
   port: 6379,
   password: '12345678',
 };
@@ -58,16 +58,6 @@ console.log('Worker iniciado.');
 
 worker.on('completed', (job) => {
   console.log('Trabajo completado:', job.id, job.returnvalue);
-  const result = job.returnvalue;
-  const url = 'https://api.legit.capital/v1/challenges/solution';
-
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(result),
-  });
 });
 
 worker.on("failed", (job, error) => {
