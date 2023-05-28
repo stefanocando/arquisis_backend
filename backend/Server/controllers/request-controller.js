@@ -42,23 +42,24 @@ const saveRequest = async(req, res, next) =>{
   
 }
 
-// Esta request es solo de prueba
-const getAllRequest = async (req, res, next) => {
-  let requests;
-  try {
-    requests = await db.Request.findAll().then((request_list) => {
-      res.json({
-        request: request_list,
-      });
-    });
+const getTicket = async (req, res, next) => {
+  try{
+    const info = req.body;
+    const { ticket_id, user_id } = info;
+    const user = db.User.findOne({ where: { user_id: user_id } });
+    const ticket = await axios.post('https://2nrlawti8d.execute-api.us-east-1.amazonaws.com/Prod/pdf-generator', {
+      "ticket_id": ticket_id,
+      "group": "23",
+      "user_name": user_id,
+      "user_mail": user.email,
+    }, { headers: { 'Content-Type': 'application/json' } });
+    console.log(ticket.data.url);
+    res.json({message: ticket.data.url});
   } catch (err) {
-    const error = new HttpError(
-      'Fetch requests failed, please try again later.',
-      500
-    );
-    return next(error);
+    res.json({message: err});
   }
 }
+
 
 const getUserRequests = async (req, res, next) => {
   const userId = req.body.user_id;
@@ -151,6 +152,6 @@ const createRequest = async (req, res, next) => {
 
 
 exports.saveRequest = saveRequest;
-exports.getAllRequest = getAllRequest;
+exports.getTicket = getTicket;
 exports.createRequest = createRequest;
 exports.getUserRequests = getUserRequests;
