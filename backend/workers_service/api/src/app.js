@@ -28,6 +28,7 @@ app.use('/admin/queues', serverAdapter.getRouter());
 app.post('/job', async (req, res) => {
   try {
     const jobData = req.body;
+    console.log(jobData);
     const job = await queue.add('challenge', jobData);
     res.json({ id: job.id });
   } catch (error) {
