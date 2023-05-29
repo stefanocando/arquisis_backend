@@ -22,7 +22,7 @@ const getUser = async (req, res, next) => {
     const id = req.params.id
 
     try {
-        const user = await db.Request.findAll({ where: { user_id: id } }).then((users) => {
+        const user = await db.Request.findOne({ where: { user_id: id } }).then((users) => {
             res.json({
                 user: users[0]
             });
