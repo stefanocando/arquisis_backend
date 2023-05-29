@@ -19,14 +19,15 @@ const createUsers = async (req, res, next) => {
 }
 
 const getUser = async (req, res, next) => {
-    const id = req.params.id
-
+    const id = req.body.user_id;
     try {
-        const user = await db.Request.findOne({ where: { user_id: id } }).then((users) => {
-            res.json({
-                user: users[0]
-            });
-        });
+        const user = await db.User.findOne({ where: { user_id: id } })
+        if (user === null) {
+            res.json({message: 'User does not exist!'});
+        }
+        else {  
+            res.json(user);
+        }
     } catch (err) {
         const error = new HttpError("Fetch user failed, please try again later", 500);
         return error;
