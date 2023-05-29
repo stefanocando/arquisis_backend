@@ -4,6 +4,7 @@ const HttpError = require('../http-error');
 const updateRequest = async (req, res, next) => {
     await wait(25000);
     const { request_id, group_id, seller, valid } = req.body.info;
+    console.log(request_id, group_id, seller, valid);
     const request = await db.Request.findOne({ where: { request_id: request_id } })
     if (request === null) {
       res.json({message: 'Validation from non existing request!'});

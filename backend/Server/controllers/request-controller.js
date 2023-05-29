@@ -3,6 +3,7 @@ const HttpError = require('../http-error');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const e = require('express');
+const { JSON } = require('sequelize');
 
 
 const saveRequest = async(req, res, next) =>{
@@ -82,22 +83,13 @@ const getUserRequests = async (req, res, next) => {
 const createRequest = async (req, res, next) => {
   const info = req.body;
   const { user_id, event_id, deposit_token, quantity, seller } = info;
-  const request_data = {
-    "request_id": uuidv4(),
-    "group_id": "23",
-    "event_id": event_id,
-    "deposit_token": deposit_token,
-    "quantity": quantity,
-    "seller": 0
-  }
-  console.log(request_data);
+  
 
   const event = await db.Event.findOne({ where: { event_id: event_id } });
   if (event === null){
     console.log('Event not found!');
     res.json({message: 'Event not found!'});
   } else {
-    console.log(event);
     if (event.quantity <= quantity) {
       res.json({message: 'Not enough tickets!'});
     } else {
@@ -119,29 +111,45 @@ const createRequest = async (req, res, next) => {
             "value": event.price,
           }, {
             headers: {'Content-Type': 'application/json'}});
-          console.log(payment_data.data);
+          // console.log(payment_data.data);
 
-          const d_token = payment_data.data.deposit_token;
-          const new_request = await db.Request.build({
-            request_id: request_data.request_id,
-            group_id: request_data.group_id,
-            deposit_token: deposit_token,
-            quantity: quantity,
-            seller: seller,
-            event_id: event_id,
-            user_id: user_id
-          });
-          event.quantity = event.quantity - quantity;
+          const d_token = payment_data.data;
+          const el_tokien = payment_data.data.deposit_token;
+
+          const challenge = await axios.post('http://board:3000/job'  , d_token, { headers: {'Content-Type': 'application/json'}}); 
+
+          const request_data = {
+            "request_id": uuidv4(),
+            "group_id": "23",
+            "event_id": event_id,
+            "deposit_token": el_tokien,
+            "quantity": quantity,
+            "seller": 0
+          }
           try {
-            await new_request.save().then(() => {console.log("Request saved!")});
-            await event.save().then(() => {console.log("Event saved!")});
-            await axios.post('http://MqttServer:9000/requests', request_data, {
-              headers: {'Content-Type': 'application/json'}});
-            res.json({ message: "The request was succesfully created!" });
-            
+            const new_request = await db.Request.build({
+              request_id: request_data.request_id,
+              group_id: request_data.group_id,
+              deposit_token: el_tokien,
+              quantity: quantity,
+              seller: seller,
+              event_id: event_id,
+              user_id: user_id
+            });
+            event.quantity = event.quantity - quantity;
+            try {
+              await new_request.save().then(() => {console.log("Request saved!")});
+              await event.save().then(() => {console.log("Event saved!")});
+              await axios.post('http://MqttServer:9000/requests', request_data, {
+                headers: {'Content-Type': 'application/json'}});
+              res.json({ message: "The request was succesfully created!" });
+              
+            } catch (err) {
+              const error = new HttpError('Could not create request', 500);
+              return error;
+            }
           } catch (err) {
-            const error = new HttpError('Could not create request', 500);
-            return error;
+            res.status(500).json({message: err});
           }
         }
       }
