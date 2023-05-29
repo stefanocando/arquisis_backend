@@ -8,6 +8,7 @@ function calculateHash(deposit_token, challenge_id, secret) {
 }
 
 async function postMethod(job_result, url) {
+  console.log('Intentado enviar solución al servidor...');
   try {
     const response = await axios.post(url, job_result, {
       headers: {'Content-Type': 'application/json'}
