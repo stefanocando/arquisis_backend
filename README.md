@@ -45,14 +45,14 @@ deben subir su frontend a AWS S3 e invalidar la caché de Cloudfront que sirve s
 ## Documentación (9 ptos)
 Todos estos documentos los deben dejar dentro de su repositorio de Github en una carpeta /docs
 para la fecha de entrega.
-- **RDOC1 (2 ptos):** Deben actualizar su diagrama UML de componentes con lo realizado en esta
+- 🟢 **RDOC1 (2 ptos):** Deben actualizar su diagrama UML de componentes con lo realizado en esta
 entrega, con explicaciones y detalle sobre el sistema.
 
 - 🟡 **RDOC2 (2 ptos):** Deben actualizar su documentación del pipeline CI para incluir los pasos
 extras necesarios para la realización del CD.
 	- Esta la documentacaión del frontend actualizada
 
--🟢 **RDOC3 (2 ptos):** Deben incluir una documentación de cómo subir su aplicación en
+- 🟢 **RDOC3 (2 ptos):** Deben incluir una documentación de cómo subir su aplicación en
 Serverless/SAM, paso a paso
 
 - **RDOC4 (3 ptos):** Deben documentar todas las posibles llamadas a sus APIs expuestas a sus
