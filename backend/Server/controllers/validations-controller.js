@@ -22,9 +22,11 @@ const updateRequest = async (req, res, next) => {
               console.log("User not found!");
             }
             else {
-              const event = await db.Event.findOne({ where: { event_id: request.event_id } })
-              user.money += request.quantity * event.price;
-              await user.save();}
+              const event_selected = await db.Event.findOne({ where: { event_id: request.event_id } })
+              user.money += request.quantity * event_selected.price;
+              event_selected.quantity += request.quantity;
+              await user.save();
+              await event_selected.save();}
           } catch (err) {
               const error = new HttpError('Could not return money.', 500);
               return error;

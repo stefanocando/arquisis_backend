@@ -117,7 +117,7 @@ const createRequest = async (req, res, next) => {
           const el_tokien = payment_data.data.deposit_token;
 
           const challenge = await axios.post('http://board:3000/job'  , d_token, { headers: {'Content-Type': 'application/json'}}); 
-
+          console.log("Data challenge:" + challenge.data);
           const request_data = {
             "request_id": uuidv4(),
             "group_id": "23",
