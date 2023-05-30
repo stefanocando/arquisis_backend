@@ -4,7 +4,7 @@
 🟢 : Logrado 🟡 : Medianamente Logrado 🔴 : No logrado
 
 ## Requisitos funcionales (13 ptos)
-- **RF01 (3 ptos) (Esencial):** Cada usuario debe tener la capacidad de agregar dinero a una
+- 🟢 **RF01 (3 ptos) (Esencial):** Cada usuario debe tener la capacidad de agregar dinero a una
 "billetera" dentro de su aplicación.
 - **RF02 (2 ptos) (Esencial):** Cuando un usuario compre una entrada dentro de su aplicación, se
 debe validar que tenga el dinero suficiente en su billetera, y si es así, descontarle el dinero
@@ -13,7 +13,7 @@ internamente para enviarlo a la API central.
 previamente y realizar el cálculo de los challenges mediante workers.
 - **RF04 (2 ptos):** Debe haber un indicador que muestre si el servicio maestro de workers está
 disponible.
-- **RF05 (3 ptos):** Los usuarios deben poder descargar su entrada si esta se validó
+- 🟢 **RF05 (3 ptos):** Los usuarios deben poder descargar su entrada si esta se validó
 correctamente desde su vista de compras.
 
 ## Requisitos no funcionales (38 ptos)
@@ -27,7 +27,7 @@ principal.
 - **RNF02 (4 ptos):** Una vez que se reciba una validación de un pago hecho en su aplicación,
 deberán enviar una notificación vía correo a los usuarios que lo solicitaron.
 
-- 🟡 **RNF03 (5 ptos):** La aplicación tiene que ofrecer un servicio de generacion de tickets PDF
+- 🟢 **RNF03 (5 ptos):** La aplicación tiene que ofrecer un servicio de generacion de tickets PDF
 desde AWS Lambda (como los que genera la página kupos.cl). Este ticket debe tener el
 nombre de su grupo y los datos del usuario y la entrada que compró. Además, debe
 almacenarse en S3 y se le debe entregar al usuario un enlace público para descargarlo desde
@@ -50,6 +50,7 @@ entrega, con explicaciones y detalle sobre el sistema.
 
 - 🟡 **RDOC2 (2 ptos):** Deben actualizar su documentación del pipeline CI para incluir los pasos
 extras necesarios para la realización del CD.
+	- Esta la documentacaión del frontend actualizada
 
 -🟢 **RDOC3 (2 ptos):** Deben incluir una documentación de cómo subir su aplicación en
 Serverless/SAM, paso a paso
