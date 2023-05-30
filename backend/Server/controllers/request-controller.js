@@ -83,79 +83,89 @@ const getUserRequests = async (req, res, next) => {
 const createRequest = async (req, res, next) => {
   const info = req.body;
   const { user_id, event_id, deposit_token, quantity, seller } = info;
-  
 
-  const event = await db.Event.findOne({ where: { event_id: event_id } });
-  if (event === null){
-    console.log('Event not found!');
-    res.json({message: 'Event not found!'});
-  } else {
-    if (event.quantity <= quantity) {
-      res.json({message: 'Not enough tickets!'});
+  try {
+    const worker_alive = axios.get('http://board:3000/heartbeat');
+    console.log(worker_alive.data);
+
+    const event = await db.Event.findOne({ where: { event_id: event_id } });
+    if (event === null){
+      console.log('Event not found!');
+      res.json({message: 'Event not found!'});
     } else {
-      const user = await db.User.findOne({ where: { user_id: user_id } });
-      if (user === null){
-        console.log("User not found!");
-        res.json({message: 'User not found!'});
+      if (event.quantity <= quantity) {
+        res.json({message: 'Not enough tickets!'});
       } else {
-        if (user.money < quantity * event.price){
-          res.json({message: 'Not enough balance!'});
+        const user = await db.User.findOne({ where: { user_id: user_id } });
+        if (user === null){
+          console.log("User not found!");
+          res.json({message: 'User not found!'});
         } else {
-          console.log("Enviando payment data!");
+          if (user.money < quantity * event.price){
+            res.json({message: 'Not enough balance!'});
+          } else {
+            console.log("Enviando payment data!");
 
-          const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
-            "group_id": "23",
-            "seller": "0",
-            "event_id": event_id,
-            "quantity": quantity,
-            "value": event.price,
-          }, {
-            headers: {'Content-Type': 'application/json'}});
-          // console.log(payment_data.data);
+            const payment_data = await axios.post('https://api.legit.capital/v1/payments', {
+              "group_id": "23",
+              "seller": "0",
+              "event_id": event_id,
+              "quantity": quantity,
+              "value": event.price,
+            }, {
+              headers: {'Content-Type': 'application/json'}});
+            // console.log(payment_data.data);
 
-          const d_token = payment_data.data;
-          const el_tokien = payment_data.data.deposit_token;
+            const d_token = payment_data.data;
+            const el_tokien = payment_data.data.deposit_token;
 
-          const challenge = await axios.post('http://board:3000/job'  , d_token, { headers: {'Content-Type': 'application/json'}}); 
-          console.log("Data challenge:" + challenge.data);
-          const request_data = {
-            "request_id": uuidv4(),
-            "group_id": "23",
-            "event_id": event_id,
-            "deposit_token": el_tokien,
-            "quantity": quantity,
-            "seller": 0
-          }
-          try {
-            const new_request = await db.Request.build({
-              request_id: request_data.request_id,
-              group_id: request_data.group_id,
-              deposit_token: el_tokien,
-              quantity: quantity,
-              seller: seller,
-              event_id: event_id,
-              user_id: user_id
-            });
-            event.quantity = event.quantity - quantity;
-            try {
-              await new_request.save().then(() => {console.log("Request saved!")});
-              await event.save().then(() => {console.log("Event saved!")});
-              await axios.post('http://MqttServer:9000/requests', request_data, {
-                headers: {'Content-Type': 'application/json'}});
-              res.json({ message: "The request was succesfully created!" });
-              
-            } catch (err) {
-              const error = new HttpError('Could not create request', 500);
-              return error;
+            const challenge = await axios.post('http://board:3000/job'  , d_token, { headers: {'Content-Type': 'application/json'}}); 
+            console.log("Data challenge:" + challenge.data);
+            const request_data = {
+              "request_id": uuidv4(),
+              "group_id": "23",
+              "event_id": event_id,
+              "deposit_token": el_tokien,
+              "quantity": quantity,
+              "seller": 0
             }
-          } catch (err) {
-            res.status(500).json({message: err});
+            try {
+              const new_request = await db.Request.build({
+                request_id: request_data.request_id,
+                group_id: request_data.group_id,
+                deposit_token: el_tokien,
+                quantity: quantity,
+                seller: seller,
+                event_id: event_id,
+                user_id: user_id
+              });
+              event.quantity = event.quantity - quantity;
+              try {
+                await new_request.save().then(() => {console.log("Request saved!")});
+                await event.save().then(() => {console.log("Event saved!")});
+                await axios.post('http://MqttServer:9000/requests', request_data, {
+                  headers: {'Content-Type': 'application/json'}});
+                res.json({ message: "The request was succesfully created!" });
+                
+              } catch (err) {
+                const error = new HttpError('Could not create request', 500);
+                return error;
+              }
+            } catch (err) {
+              res.status(500).json({message: err});
+            }
           }
         }
-      }
 
+      }
     }
+    
+  } catch (err) {
+    res.status(500).json({message: 'Worker is not alive!'});
   }
+  
+
+  
 }
 
 

@@ -49,7 +49,7 @@ app.get('/job/:id', async (req, res) => {
 });
 
 app.get('/heartbeat', (req, res) => {
-  res.json({ status: true });
+  res.status(200).json({ status: true });
 });
 
 app.listen(3000, () => {
