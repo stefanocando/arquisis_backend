@@ -129,6 +129,7 @@ const createRequest = async (req, res, next) => {
               "quantity": quantity,
               "seller": 0
             }
+            user.money = user.money - (quantity * event.price);
             try {
               const new_request = await db.Request.build({
                 request_id: request_data.request_id,
@@ -143,6 +144,7 @@ const createRequest = async (req, res, next) => {
               try {
                 await new_request.save().then(() => {console.log("Request saved!")});
                 await event.save().then(() => {console.log("Event saved!")});
+                await user.save().then(() => {console.log("User saved!")});
                 await axios.post('http://MqttServer:9000/requests', request_data, {
                   headers: {'Content-Type': 'application/json'}});
                 res.json({ message: "The request was succesfully created!" });
