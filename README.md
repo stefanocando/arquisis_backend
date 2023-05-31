@@ -6,25 +6,25 @@
 ## Requisitos funcionales (13 ptos)
 - 🟢 **RF01 (3 ptos) (Esencial):** Cada usuario debe tener la capacidad de agregar dinero a una
 "billetera" dentro de su aplicación.
-- **RF02 (2 ptos) (Esencial):** Cuando un usuario compre una entrada dentro de su aplicación, se
+- 🟢 **RF02 (2 ptos) (Esencial):** Cuando un usuario compre una entrada dentro de su aplicación, se
 debe validar que tenga el dinero suficiente en su billetera, y si es así, descontarle el dinero
 internamente para enviarlo a la API central.
-- **RF03 (3 ptos) (Esencial):** Para validar su compra deben hacer la llamada como se explica
+- 🟢 **RF03 (3 ptos) (Esencial):** Para validar su compra deben hacer la llamada como se explica
 previamente y realizar el cálculo de los challenges mediante workers.
-- **RF04 (2 ptos):** Debe haber un indicador que muestre si el servicio maestro de workers está
+- 🟢 **RF04 (2 ptos):** Debe haber un indicador que muestre si el servicio maestro de workers está
 disponible.
 - 🟢 **RF05 (3 ptos):** Los usuarios deben poder descargar su entrada si esta se validó
 correctamente desde su vista de compras.
 
 ## Requisitos no funcionales (38 ptos)
-- **RNF01 (15 ptos):** Deben crear el servicio que hace el cálculo de la prueba criptográfica de
+- 🟢 **RNF01 (15 ptos):** Deben crear el servicio que hace el cálculo de la prueba criptográfica de
 pagos indicada en el enunciado, el cual asigna tareas a workers, lleva el registro de trabajos y
 los resultados. Este servicio existe en un container independiente, se conecta via HTTP
 ofreciendo una API REST y posee workers conectados mediante un broker con capacidad de
 encolado/pubsub (Redis/rabbitMQ), así como conexión a la base de datos del backend
 principal.
     - Separar los workers en contenedores propios tiene un bonus de 5 ptos
-- **RNF02 (4 ptos):** Una vez que se reciba una validación de un pago hecho en su aplicación,
+- 🔴 **RNF02 (4 ptos):** Una vez que se reciba una validación de un pago hecho en su aplicación,
 deberán enviar una notificación vía correo a los usuarios que lo solicitaron.
 
 - 🟢 **RNF03 (5 ptos):** La aplicación tiene que ofrecer un servicio de generacion de tickets PDF
@@ -34,7 +34,7 @@ almacenarse en S3 y se le debe entregar al usuario un enlace público para desca
 S3. Deben utilizar Serverless.js o AWS SAM para manejar y desplegar esta función.
     - Crear un pipe CI/CD para este servicio tiene un bonus de 4 ptos
 
-- **RNF04 (9 ptos):** Deben implementar CD en su pipeline CI/CD para backend. Como
+- 🔴 **RNF04 (9 ptos):** Deben implementar CD en su pipeline CI/CD para backend. Como
 proveedores aceptados de CI están Github Actions, Codebuild y CircleCI. Para deployment
 deben usar AWS codedeploy.
 
@@ -55,7 +55,7 @@ extras necesarios para la realización del CD.
 - 🟢 **RDOC3 (2 ptos):** Deben incluir una documentación de cómo subir su aplicación en
 Serverless/SAM, paso a paso
 
-- **RDOC4 (3 ptos):** Deben documentar todas las posibles llamadas a sus APIs expuestas a sus
+- 🟢 **RDOC4 (3 ptos):** Deben documentar todas las posibles llamadas a sus APIs expuestas a sus
 clientes con algún estandar (Postman, Swagger u otra)
 
 
